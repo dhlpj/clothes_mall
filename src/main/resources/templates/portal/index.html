@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head lang="en">
+		<meta charset="utf-8" />
+		<title>服装商城</title>
+		<link rel="stylesheet" type="text/css" th:href="@{/portal/css/public.css}"/>
+		<link rel="stylesheet" type="text/css" th:href="@{/portal/css/index.css}" />
+		<link rel="stylesheet" type="text/css" th:href="@{/portal/css/flexslider.css}" />
+	</head>
+	<body>
+		<!------------------------------head------------------------------>
+		<div class="head">
+			<div class="wrapper clearfix">
+				<div class="clearfix" id="top">
+					<h1 class="fl">
+						<a href="/portal/index.html">
+						<img src="/portal/img/logo.PNG"/>
+						</a>
+					</h1>
+					<div class="fr clearfix" id="top1">
+						<p class="fl">
+							<span th:if="${session.username}" th:text="|欢迎您: ${session.username}|">jack</span>
+							<a th:if="${session.username}" href="#" id="logout">退出</a>
+							<a th:if="${session.username}==null" href="/portal/login.html" id="login">登录</a>
+							<a th:if="${session.username}==null" href="/portal/register.html" id="reg">注册</a>
+						</p>
+						<form action="#" method="get" class="fl" id="searchForm">
+							<input type="text" placeholder="热门搜索：T恤"/>
+							<input type="button"/>
+						</form>
+						<div class="btn fl clearfix">
+							<a href="/portal/user/toHomePage"><img src="img/grzx.png"/></a>
+							<a href="/portal/cart/toCartPage"><img src="img/gwc.png"/></a>
+							<p><a href="#"><img src="/portal/img/smewm.png"/></a></p>
+						</div>
+					</div>
+				</div>
+				<ul class="clearfix" id="bott">
+					<li><a th:href="@{/portal/index.html}">首页</a></li>
+					<li th:each="category : ${session.categories}">
+						<a th:href="@{/portal/search.html(cid1=${category.id},categoryName=${category.name})}" th:text="${category.name}">男装</a>
+						<div class="sList2">
+							<div class="clearfix">
+								<a th:href="@{/portal/search.html(cid2=${categorySec.id},categoryName=|${category.name}-${categorySec.name}|)}" th:each="categorySec : ${category.categories}" th:text="${categorySec.name}">T恤</a>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!-------------------------banner 轮播图--------------------------->
+		<div class="block_home_slider">
+			<div id="home_slider" class="flexslider">
+				<ul class="slides">
+					<li>
+						<div class="slide">
+							<img src="/portal/img/banner1.jpg"/>
+						</div>
+					</li>
+					<li>
+						<div class="slide">
+							<img src="/portal/img/banner2.jpg"/>
+						</div>
+					</li>
+					<li>
+						<div class="slide">
+							<img src="/portal/img/banner3.jpg"/>
+						</div>
+					</li>
+					<li>
+						<div class="slide">
+							<img src="/portal/img/banner4.jpg"/>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!------------------------------people------------------------------>
+		<div class="people">
+			<div class="wrapper">
+				<h2><img src="img/ih5.jpg"/></h2>
+
+			</div>
+		</div>
+		<!--返回顶部-->
+		<div class="gotop">
+			<a href="/portal/cart/toCartPage">
+			<dl>
+				<dt><img src="/portal/img/gt1.png"/></dt>
+				<dd>去购<br />物车</dd>
+			</dl>
+			</a>
+			<a href="#" class="dh">
+			<dl>
+				<dt><img src="/portal/img/gt2.png"/></dt>
+				<dd>联系<br />客服</dd>
+			</dl>
+			</a>
+			<a href="/portal/user/toHomePage">
+			<dl>
+				<dt><img src="/portal/img/gt3.png"/></dt>
+				<dd>个人<br />中心</dd>
+			</dl>
+			</a>
+			<a href="#" class="toptop" style="display: none">
+			<dl>
+				<dt><img src="/portal/img/gt4.png"/></dt>
+				<dd>返回<br />顶部</dd>
+			</dl>
+			</a>
+			<p>400-800-8200</p>
+		</div>
+		
+		<!-------------------login-------------------------->
+		<!--footer-->
+		<div class="footer">
+			<div class="top">
+				<div class="wrapper">
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot1.png"/></a>
+						<span class="fl">7天无理由退货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot2.png"/></a>
+						<span class="fl">15天免费换货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot3.png"/></a>
+						<span class="fl">满599包邮</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot4.png"/></a>
+						<span class="fl">售后服务咨询</span>
+					</div>
+				</div>
+			</div>
+			<p class="dibu">杰森服装商城&copy;Jack<br/>
+			</p>
+		</div>
+		
+		<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/nav.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/jquery.flexslider-min.js" type="text/javascript" charset="utf-8"></script>
+		<script th:inline="javascript">
+            const searchItems = /*[[${searchItems}]]*/ {};
+		</script>
+		<script type="text/html" id="newestPList">
+			<div class="pList clearfix tran">
+
+			</div>
+		</script>
+		<script type="text/html" id="product">
+            <a href="productDetail.html">
+                <dl>
+					<dt>
+						<span class="abl"></span>
+						<img src="img/s6.jpg"/>
+						<span class="abr"></span>
+					</dt>
+					<dd>T恤</dd>
+					<dd>
+						<span>￥228.00</span>
+					</dd>
+            	</dl>
+            </a>
+		</script>
+		<script type="text/javascript">
+			$(function() {
+				$('#home_slider').flexslider({
+					animation: 'slide',//滑动效果
+					controlNav: true,//是否显示控制小圆点
+					directionNav: true,//是否显示左右控制键
+					animationLoop: true,//是否循环滚动
+					slideshow: true,//载入页面时，是否自动播放
+					slideshowSpeed:2000//每次自动滑动间隔时间
+				});
+				console.log(searchItems.length);
+				var $newestPList;
+                for(var i=0;i<searchItems.length;i++){
+                    if(i%4==0){
+                        $(".people>.wrapper").append($newestPList);
+                        $newestPList = $($("#newestPList").html());
+					}
+                    var $product = $($("#product").html());
+                    var id = $.parseJSON(searchItems[i].id);
+                    console.log(searchItems[i]);
+                    console.log(id);
+                    var productId = id.productId;
+                    var colorId = id.colorId;
+                    var image = searchItems[i].image;
+                    var name = searchItems[i].name;
+                    var price = searchItems[i].price/100;
+                    $product.attr("href","/portal/product/productDetail?productId="+productId+"&colorId="+colorId);
+                    $product.find("dl>dt>img").attr("src",image);
+                    $product.find("dd").eq(0).text(name);
+                    $product.find("dd").eq(1).children("span").text("￥"+price);
+                    $newestPList.append($product);
+				}
+                $(".people>.wrapper").append($newestPList);
+			});
+		</script>
+	</body>
+</html>

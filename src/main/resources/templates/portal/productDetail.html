@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8">
+		<title>详情页</title>
+		<link rel="stylesheet" type="text/css" th:href="@{/portal/css/public.css}"/>
+		<link rel="stylesheet" type="text/css" th:href="@{/portal/css/proList.css}"/>
+		<link rel="stylesheet" type="text/css" th:href="@{/portal/css/pagination.css}"/>
+	</head>
+	<body>
+		<!------------------------------head------------------------------>
+		<div class="head">
+			<div class="wrapper clearfix">
+				<div class="clearfix" id="top">
+					<h1 class="fl"><a th:href="@{/portal/index.html}"><img th:src="@{/portal/img/logo.png}"/></a></h1>
+					<div class="fr clearfix" id="top1">
+						<p class="fl">
+							<span th:if="${session.username}" th:text="|欢迎您: ${session.username}|">jack</span>
+							<a th:if="${session.username}" href="#" id="logout">退出</a>
+							<a th:if="${session.username}==null" href="/portal/login.html" id="login">登录</a>
+							<a th:if="${session.username}==null" href="/portal/register.html" id="reg">注册</a>
+						</p>
+						<form action="#" method="get" class="fl" id="searchForm">
+							<input type="text" placeholder="热门搜索：T恤"/>
+							<input type="button"/>
+						</form>
+						<div class="btn fl clearfix">
+							<a href="/portal/user/toHomePage"><img th:src="@{/portal/img/grzx.png}"/></a>
+							<a href="/portal/cart/toCartPage"><img th:src="@{/portal/img/gwc.png}"/></a>
+							<p><a href="#"><img th:src="@{/portal/img/smewm.png}"/></a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-----------------address------------------------------->
+		<div class="address">
+			<div class="wrapper clearfix">
+				<a th:href="@{/portal/index.html}">首页</a>
+				<span>/</span>
+				<a th:href="@{/portal/search.html(cid1=${cid1.id},categoryName=${cid1.name})}" th:text="${cid1.name}">男装</a>
+				<span>/</span>
+				<a <a th:href="@{/portal/search.html(cid2=${cid2.id},categoryName=|${cid1.name}-${cid2.name}|)}" th:text="${cid2.name}">T恤</a>
+				<span>/</span>
+				<a href="#" class="on" th:text="${name}">樱花T恤</a>
+			</div>
+		</div>
+		<!-----------------------Detail------------------------------>
+		<div class="detCon">
+			<div class="proDet wrapper">
+				<div class="proCon clearfix">
+					<div class="proImg fl">
+						<img class="det" th:src="${currentColor.images.split(',')[0]}" /><!--第一张商品图片-->
+						<div class="smallImg clearfix"><!--所有的商品图片(前面是缩略图)-->
+							<img th:each="img : ${currentColor.images.split(',')}" th:src="${img}" th:data-src="${img}">
+						</div>
+					</div>
+					<div class="fr intro">
+						<div class="title">
+							<h4 th:text="${name}+' '+${currentColor.colorName}">樱花T恤</h4>
+							<h4 th:if="${saleable}==false">已下架</h4>
+							<span th:text="'￥'+${currentColor.price/100}">￥59.90</span>
+						</div>
+						<div class="proIntro">
+							<p>颜色分类</p>
+							<div class="smallImg clearfix categ" id="colorField">
+							</div>
+							<p>尺寸</p>
+							<div class="smallImg clearfix categ" id="sizeField">
+
+							</div>
+							<div id="stockField">
+
+							</div>
+							<div class="num clearfix">
+								<img class="fl sub" th:src="@{/portal/img/temp/sub.jpg}">
+								<span class="fl" contentEditable="true" id="productNumEdit">1</span>
+								<img class="fl add" th:src="@{/portal/img/temp/add.jpg}">
+								<p class="please fl">请选择商品属性!</p>
+								<p class="please fl">请选择尺寸！</p>
+								<p class="please fl">您所填写的数量超过库存！</p>
+								<p class="please fl">请填写正确的数量！</p>
+							</div>
+						</div>
+						<div class="btns clearfix">
+							<a href="#2"><p class="cart fr" id="addToCart" th:if="${saleable}">加入购物车</p></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="introMsg wrapper clearfix">
+			<div class="msgL fl">
+				<div class="msgTit clearfix">
+					<a class="on">商品详情</a>
+					<a>所有评价</a>
+				</div>
+				<div class="msgAll">
+					<div class="msgImgs" th:utext="${detail.description}"><!--商品详情-->
+
+					</div>
+					<div class="eva">
+
+						<!--分页-->
+						<div class="paginationBox m-style" id="paginationBox" style="margin-bottom: 10px">
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--返回顶部-->
+		<div class="gotop">
+			<a th:href="@{/portal/cart/toCartPage}">
+			<dl class="goCart">
+				<dt><img th:src="@{/portal/img/gt1.png}"/></dt>
+				<dd>去购<br />物车</dd>
+			</dl>
+			</a>
+			<a href="#" class="dh">
+			<dl>
+				<dt><img th:src="@{/portal/img/gt2.png}"/></dt>
+				<dd>联系<br />客服</dd>
+			</dl>
+			</a>
+			<a th:href="@{/portal/user/toHomePage}">
+			<dl>
+				<dt><img th:src="@{/portal/img/gt3.png}"/></dt>
+				<dd>个人<br />中心</dd>
+			</dl>
+			</a>
+			<a href="#" class="toptop" style="display: none;">
+			<dl>
+				<dt><img th:src="@{/portal/img/gt4.png}"/></dt>
+				<dd>返回<br />顶部</dd>
+			</dl>
+			</a>
+			<p>400-800-8200</p>
+		</div>
+		<div class="msk"></div>
+		<!--footer-->
+		<div class="footer">
+			<div class="top">
+				<div class="wrapper">
+					<div class="clearfix">
+						<a href="#2" class="fl"><img th:src="@{/portal/img/foot1.png}"/></a>
+						<span class="fl">7天无理由退货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img th:src="@{/portal/img/foot2.png}"/></a>
+						<span class="fl">15天免费换货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img th:src="@{/portal/img/foot3.png}"/></a>
+						<span class="fl">满599包邮</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img th:src="@{/portal/img/foot4.png}"/></a>
+						<span class="fl">售后服务咨询</span>
+					</div>
+				</div>
+			</div>
+			<p class="dibu">杰森服装商城&copy;Jack<br/>
+			</p>
+		</div>
+		<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/jquery.SuperSlide.2.1.1.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/nav.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/jquery.pagination.js"></script>
+		<script type="text/javascript">
+			jQuery(".bottom").slide({titCell:".hd ul",mainCell:".bd .likeList",autoPage:true,autoPlay:false,effect:"leftLoop",autoPlay:true,vis:1});
+		</script>
+		<script th:inline="javascript">
+			const productId = /*[[${productId}]]*/ 0;
+            const userId = /*[[${session.userId}]]*/ 0;
+            const colors = /*[[${colors}]]*/ {};
+            const currentColor = /*[[${currentColor}]]*/ {};
+            const sizes = /*[[${sizes}]]*/ {};
+		</script>
+		<script type="text/html" id="colorChoice">
+			<p class="fl" style="cursor:pointer">
+				<img src="" alt="" data-src="">
+			</p>
+		</script>
+		<script type="text/html" id="sizeChoice">
+            <p class="fl" style="cursor:pointer ">
+            </p>
+		</script>
+		<script type="text/html" id="stockText">
+            <p>数量&nbsp;&nbsp;库存<span>0</span>件</p>
+		</script>
+		<script type="text/html" id="commentDiv">
+			<div class="per clearfix">
+				<img class="fl" src="/portal/img/tx.png" style="width: 41px;height: 40px">
+				<div class="perR fl">
+					<p>Jack</p><!--用户名-->
+					<p>不好意思评价晚了，产品很好，包装好</p><!--评价-->
+					<p>
+						<span>2016年12月27日08:31</span>
+						<span>颜色分类：红色</span>
+					</p>
+				</div>
+			</div>
+		</script>
+		<script type="text/javascript">
+			var sizeId = 0;
+            var maxBuyCount = 0;
+            var page = 1;
+            $(function () {
+                //填充颜色选择区域
+			    for(var i=0;i<colors.length;i++){
+                    var $colorChoice = $($("#colorChoice").html());
+                    var images = colors[i].images;
+                    $colorChoice.find("img").attr("src",images.split(",")[0]).attr("data-src",images.split(",")[0]).attr("alt",colors[i].colorName);
+                    $colorChoice.find("img").attr("href","/portal/product/productDetail?productId="+productId+"&colorId="+colors[i].id);
+                    if(colors[i].id==currentColor.id){
+                        $colorChoice.addClass("on");
+                        $colorChoice.addClass("selected");
+					}
+					$("#colorField").append($colorChoice);
+                }
+                //填充尺寸选择区域
+                for(var i=0;i<sizes.length;i++){
+			        var $sizeChoice = $($("#sizeChoice").html());
+                    $sizeChoice.text(sizes[i].sizeName);
+                    $sizeChoice.attr("sizeId",sizes[i].id);
+                    $sizeChoice.attr("stockCount",sizes[i].stockCount);
+                    if(sizes[i].stockCount==0){//库存为0,显示为灰色,并且鼠标移动到上面不会显示小手
+                        $sizeChoice.css("opacity",0.2);
+                        $sizeChoice.css("cursor","default");
+                        $sizeChoice.addClass("cannotSelected");
+					}
+			        $("#sizeField").append($sizeChoice);
+				}
+				//选择颜色事件
+                $("#colorField").find("img").on("click",function () {
+                    var href = $(this).attr("href");
+                    window.location.href = href;
+                });
+				//鼠标在尺寸上移动的效果
+                $("#sizeField p").hover(function(){
+                    if(!$(this).hasClass("cannotSelected")){//可以选中的p才会显示选中框
+                        $(this).addClass('on');
+					}
+                },function(){
+                    if(!$(this).hasClass("selected")){
+                        $(this).removeClass('on');
+                    }
+                });
+
+                //点击尺寸后的效果及加载库存
+                $("#sizeField p").on("click",function () {
+                    if(!$(this).hasClass("cannotSelected")) {//可以选中的p才能点击
+                        $(this).siblings().removeClass("on").removeClass("selected");
+                        $(this).addClass('on').addClass("selected");
+                        sizeId = $(this).attr("sizeId");
+                        var stockCount = parseInt($(this).attr("stockCount"));
+                        $("#stockField").empty();
+                        var $stockText = $($("#stockText").html());
+                        $stockText.find("span").text(stockCount);
+                        maxBuyCount = stockCount;
+                        $("#stockField").append($stockText);
+                        $(".num .please:eq(1)").hide();//关闭选择尺寸提示
+                        var num = parseInt($("#productNumEdit").text());
+						if(num>maxBuyCount){
+                            $(".num .please:eq(2)").show();//显示数量超过库存提示
+						}
+                    }
+                });
+
+                /**************数量加减***************/
+                $(".num .sub").click(function(){
+                    var num = parseInt($(this).siblings("span").text());
+                    if(num<=1){
+                        $(this).attr("disabled","disabled");
+                    }else {
+                        num--;
+                        if(num<maxBuyCount){
+                            $(".num .please:eq(2)").hide();//隐藏数量超过库存提示
+                        }
+                    }
+                    $(this).siblings("span").text(num);
+                });
+                $(".num .add").click(function() {
+                    var num = parseInt($(this).siblings("span").text());
+                    if (num < maxBuyCount) {
+                        num++;
+                        $(this).siblings("span").text(num);
+                    }else {
+                        $(this).attr("disabled","disabled");
+					}
+                });
+
+                /**************监听购买数量的改变***************/
+                $("#productNumEdit").bind("input propertychange",function(event){
+                    if($.trim($(this).text())==""){
+                        $(".num .please:eq(3)").show();//提示输入正确的数量
+                    }else{
+                        $(".num .please:eq(3)").hide();
+                        if(sizeId==0){
+                            $(".num .please:eq(1)").show();//提示选择尺寸
+                        }else{
+                            var num = parseInt($(this).text());
+                            if(num>maxBuyCount){
+                                $(".num .please:eq(2)").show();
+                                $(".num .add").attr("disabled","disabled");//+库存不能使用
+                            }else {
+                                $(".num .please:eq(2)").hide();
+                            }
+                            if(num==0){
+                                $(this).text("1");
+                            }
+                        }
+					}
+                });
+
+                /**********************加入购物车************************************/
+                $(".btns .cart").click(function(){
+                    var numText = $("#productNumEdit").text();
+                    var num = parseInt(numText);
+                    if(numText==""){
+                        $(".num .please:eq(3)").show();//提示输入正确的数量
+                        $(".proIntro").css("border","1px solid #c10000");
+                        return;
+                    }else{
+                        if(sizeId==0){
+                            $(".num .please:eq(1)").show();//提示选择尺寸
+                            $(".proIntro").css("border","1px solid #c10000");
+                            return;
+                        }else{
+                            if(num>maxBuyCount){
+                                $(".num .please:eq(2)").show();
+                                $(".num .add").attr("disabled","disabled");//+库存不能使用
+                                $(".proIntro").css("border","1px solid #c10000");
+                                return;
+                            }
+                        }
+                    }
+                    $(".proIntro").css("border","none");
+					if(userId==0||userId==null){
+                        var redirectURL = window.location.href;//记录当前url，方便登录跳转
+                        window.location.href="/portal/login.html"+"?redirectURL="+window.btoa(redirectURL);
+                        return;
+					}
+					console.log(productId);
+                    console.log(currentColor.id);
+                    console.log(sizeId);
+                    console.log(num);
+                    $.ajax({
+                        type : "POST",  //提交方式
+                        url : "/portal/cart/addProduct",//+"?redirectURL="+redirectURL,//路径
+                        data : {"productId":productId,"colorId":currentColor.id,"sizeId":sizeId,"num":num},
+                        success : function(res) {//返回数据根据结果进行相应的处理
+                            if(res.code==200){
+                                window.location.href = "/portal/cart/toCartPage";
+                            }else{
+                                alert(res.msg);
+                            }
+                        }
+                    });
+                });
+            });
+
+            window.setTimeout(function () {//延时三秒后查询
+                queryComment();
+            },3000);
+
+            function queryComment() {
+                //清空
+                $(".msgAll>.eva").children(".per").remove();
+                $.ajax({
+                    url: "/portal/product/comment/"+productId,
+                    type: "GET",
+					data: {"page":page},
+                    dataType: "json",
+                    success:function(res){
+                        if(res.code == 200){
+                            if(res.count==0){
+                                $(".msgAll>.eva").append("该商品暂无评论");
+                            }else{
+                                var comments = res.data;
+                                for(var i=0;i<comments.length;i++){
+                                    var $commentDiv = $($("#commentDiv").html());
+                                    $commentDiv.children("div").children("p").eq(0).text(comments[i].username);
+                                    $commentDiv.children("div").children("p").eq(1).text(comments[i].commentText);
+                                    $commentDiv.children("div").children("p").eq(2).children("span").eq(0).text(comments[i].createTime);
+                                    var specStr = "颜色："+comments[i].colorName+",尺寸："+comments[i].sizeName;
+                                    $commentDiv.children("div").children("p").eq(2).children("span").eq(1).text(specStr);
+                                    $('.paginationBox').before($commentDiv);
+                                    //$(".msgAll>.eva").append($commentDiv);
+                                }
+                                console.log(res);
+                                //分页
+                                $('.paginationBox').pagination({
+                                    totalData: res.count,
+                                    pageCount: res.totalPage,
+                                    current: page,
+                                    jump: true,
+                                    callback: function (api) {
+                                        page = api.getCurrent();
+                                        queryComment();
+                                    }
+                                });
+                            }
+                        }else{
+                            alert(res.msg);
+                        }
+                    }
+                });
+            }
+		</script>
+		<script th:src="@{/portal/js/pro.js}" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

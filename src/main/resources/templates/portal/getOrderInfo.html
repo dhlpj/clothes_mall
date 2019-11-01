@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head lang="en">
+		<meta charset="utf-8" />
+		<title>order</title>
+		<link rel="stylesheet" type="text/css" href="/portal/css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="/portal/css/proList.css" />
+		<link rel="stylesheet" type="text/css" href="/portal/css/mygxin.css" />
+	</head>
+	<body>
+		<!----------------------------------------order------------------>
+		<div class="head">
+			<div class="wrapper clearfix">
+				<div class="clearfix" id="top">
+					<h1 class="fl">
+						<a th:href="@{/portal/index.html}">
+							<img th:src="@{/portal/img/logo.PNG}"/>
+						</a>
+					</h1>
+					<div class="fr clearfix" id="top1">
+						<p class="fl">
+							<span th:if="${session.username}" th:text="|欢迎您: ${session.username}|">jack</span>
+							<a th:if="${session.username}" href="#" id="logout">退出</a>
+							<a th:if="${session.username}==null" href="/portal/login.html" id="login">登录</a>
+							<a th:if="${session.username}==null" href="/portal/register.html" id="reg">注册</a>
+						</p>
+						<form action="#" method="get" class="fl" id="searchForm">
+							<input type="text" placeholder="热门搜索：T恤"/>
+							<input type="button"/>
+						</form>
+						<div class="btn fl clearfix">
+							<a href="/portal/user/toHomePage"><img th:src="@{/portal/img/grzx.png}"/></a>
+							<a href="/portal/cart/toCartPage"><img th:src="@{/portal/img/gwc.png}"/></a>
+							<p><a href="#"><img th:src="@{/portal/img/smewm.png}"/></a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="order cart mt" style="margin-top: 10px">
+			<!-----------------site------------------->
+			<div class="site">
+				<p class="wrapper clearfix">
+					<span class="fl">订单确认</span>
+					<img class="top" src="/portal/img/temp/cartTop02.png">
+				</p>
+			</div>
+			<!-----------------orderCon------------------->
+			<div class="orderCon wrapper clearfix">
+				<div class="orderL fl">
+					<!--------h3---------------->
+					<h3>收件信息<a href="#" class="fr addAddress">新增地址</a></h3>
+					<!--------addres---------------->
+					<div class="addres clearfix" >
+						<div class="addre fl"  th:if="${shippings.size()>0}" th:each="shipping:${shippings}" th:attr="shippingid=${shipping.id}">
+							<div class="tit clearfix">
+								<p class="fl" th:text="${shipping.receiver}">
+									张三1
+								</p>
+								<p class="fr">
+									<a href="#" class="delete">删除</a>
+									<span>|</span>
+									<a href="#" class="edit">编辑</a>
+								</p>
+							</div>
+							<div class="addCon">
+								<p th:text="${shipping.totalAddress}">四川省&nbsp;攀枝花市&nbsp;东区&nbsp;攀大</p>
+								<p th:text="${shipping.mobile}">1800018000</p>
+								<p th:text="${shipping.zip}" style="display:none">10000</p>
+							</div>
+						</div>
+					</div>
+					<h3>支付方式</h3>
+					<!--------way---------------->
+					<div class="way clearfix">
+						<img class="on" src="/portal/img/temp/way01.jpg" paymentType="1">
+						<!--暂时不支持货到付款<img src="/portal/img/temp/way04.jpg" paymentType="2">-->
+					</div>
+				</div>
+				<div class="orderR fr">
+					<div class="msg">
+						<h3>订单内容<a href="/portal/cart/toCartPage" class="fr">返回购物车</a></h3>
+						<!--------ul---------------->
+						<ul class="clearfix" th:if="${cartItems}!=null" th:each="cartItem:${cartItems}"  th:attr="itemId=${cartItem.id}">
+							<li class="fl">
+								<img th:src="${cartItem.image}" style="width: 87px;height: 87px">
+							</li>
+							<li class="fl">
+								<p th:text="${cartItem.name}">T恤</p>
+								<p th:text="|颜色: ${cartItem.colorName}|">颜色: 白色</p>
+								<p th:text="|尺寸: ${cartItem.sizeName}|">尺寸: S</p>
+								<p th:text="|数量: ${cartItem.num}|">数量：1</p>
+							</li>
+							<li class="fr" th:text="|￥${cartItem.totalPrice/100}|">￥69.90</li>
+						</ul>
+					</div>
+					<!--------tips---------------->
+					<div class="tips">
+						<p><span class="fl">商品金额：</span><span class="fr" th:text="|￥${productTotalPrice/100}|">￥0</span></p>
+						<p><span class="fl">优惠金额：</span><span class="fr">￥0.00</span></p>
+						<p><span class="fl">运费：</span><span class="fr" th:text="|￥${postFee/100}|">￥10</span></p>
+					</div>
+					<!--------tips count---------------->
+					<div class="count tips">
+						<p><span class="fl">合计：</span><span class="fr" th:text="|￥${orderTotalPrice/100}|">￥10</span></p>
+					</div>
+					<!--<input type="button" name="" value="去支付"> -->
+					<a href="#" class="pay">去支付</a>
+				</div>
+			</div>
+		</div>
+		<!--编辑弹框-->
+		<!--遮罩-->
+		<div class="mask"></div>
+		<div class="adddz editAddre">
+			<form action="#" method="POST">
+				<input type="hidden" name="id">
+				<input type="text" name="receiver" placeholder="姓名" class="on" />
+				<input type="text" name="mobile" placeholder="手机号" />
+				<input type="text" name="province" placeholder="省份/自治区">
+				<input type="text" name="city" placeholder="城市/地区">
+				<input type="text" name="district" placeholder="区/县">
+				<input type="text" name="address" placeholder="详细地址"/>
+				<input type="text" name="zip" placeholder="邮政编码" />
+				<div class="bc shippingBtn">
+					<input type="button" value="保存" />
+					<input type="button" value="取消" />
+				</div>
+			</form>
+		</div>
+		<!--返回顶部-->
+		<div class="gotop">
+			<a href="/portal/cart/toCartPage">
+			<dl>
+				<dt><img src="/portal/img/gt1.png"/></dt>
+				<dd>去购<br />物车</dd>
+			</dl>
+			</a>
+			<a href="#" class="dh">
+			<dl>
+				<dt><img src="/portal/img/gt2.png"/></dt>
+				<dd>联系<br />客服</dd>
+			</dl>
+			</a>
+			<a href="/portal/user/toHomePage">
+			<dl>
+				<dt><img src="/portal/img/gt3.png"/></dt>
+				<dd>个人<br />中心</dd>
+			</dl>
+			</a>
+			<a href="#" class="toptop" style="display: none;">
+			<dl>
+				<dt><img src="/portal/img/gt4.png"/></dt>
+				<dd>返回<br />顶部</dd>
+			</dl>
+			</a>
+			<p>400-800-8200</p>
+		</div>
+		<!--footer-->
+		<div class="footer">
+			<div class="top">
+				<div class="wrapper">
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot1.png"/></a>
+						<span class="fl">7天无理由退货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot2.png"/></a>
+						<span class="fl">15天免费换货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot3.png"/></a>
+						<span class="fl">满599包邮</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot4.png"/></a>
+						<span class="fl">售后服务咨询</span>
+					</div>
+				</div>
+			</div>
+			<p class="dibu">杰森服装商城&copy;Jack<br/>
+			</p>
+		</div>
+		<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/nav.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/pro.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/user.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			$(".pay").click(function () {
+			    var shippingId = parseInt($(".addres").children(".on").attr("shippingid"));
+			    if(shippingId){
+                    var params = location.search; //获取url中"?"符及其后的字串
+                    if (params.indexOf("?") != -1) {
+                        var str = params.substr(1);
+                        var requestParam = str.split("&");
+                        if (requestParam.length == 1) {
+                            var keyAndValue = requestParam[0].split("=");
+                            if (keyAndValue[0] == "itemIds") {
+                                var itemIds = keyAndValue[1];
+                                var itemIdsArray = itemIds.split(",");
+                                var paymentType = parseInt($(".way .on").attr("paymentType"));
+                                var orderVO = {};
+                                orderVO.itemIds = itemIdsArray;
+                                orderVO.shippingId = shippingId;
+                                orderVO.paymentType = paymentType;
+                                //ajax请求
+                                $.ajax({
+                                    type : "POST",  //提交方式
+                                    url : "/portal/order/createOrder",//路径
+                                    data : JSON.stringify(orderVO),
+                                    dataType: "json",
+                                    contentType: "application/json",
+                                    success : function(res) {//返回数据根据结果进行相应的处理
+                                        if(res.code==200){
+                                            var orderId = res.data;//如果orderId由后台返回Long类型，会出现精度丢失，在后台转化为string返回
+                                            console.log(orderId);
+                                            //跳转到支付宝的页面
+											window.location.href="/portal/alipay/toAlipayPage/"+orderId;
+                                        }else{
+                                            alert(res.msg);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+				}else{
+			        alert("请选择收货地址！");
+				}
+            });
+		</script>
+	</body>
+</html>

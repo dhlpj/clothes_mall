@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="utf-8" />
+    <title>商品不存在</title>
+    <link rel="stylesheet" type="text/css" href="/portal/css/public.css"/>
+    <link rel="stylesheet" type="text/css" href="/portal/css/proList.css" />
+</head>
+<body>
+<div class="head">
+    <div class="wrapper clearfix">
+        <div class="clearfix" id="top">
+            <h1 class="fl">
+                <a th:href="@{/portal/index.html}">
+                    <img th:src="@{/portal/img/logo.PNG}"/>
+                </a>
+            </h1>
+            <div class="fr clearfix" id="top1">
+                <p class="fl">
+                    <span th:if="${session.username}" th:text="|欢迎您: ${session.username}|">jack</span>
+                    <a th:if="${session.username}" href="#" id="logout">退出</a>
+                    <a th:if="${session.username}==null" href="/portal/login.html" id="login">登录</a>
+                    <a th:if="${session.username}==null" href="/portal/register.html" id="reg">注册</a>
+                </p>
+                <form action="#" method="get" class="fl" id="searchForm">
+                    <input type="text" placeholder="热门搜索：T恤"/>
+                    <input type="button"/>
+                </form>
+                <div class="btn fl clearfix">
+                    <a href="/portal/user/toHomePage"><img th:src="@{/portal/img/grzx.png}"/></a>
+                    <a href="#" class="er1"><img th:src="@{/portal/img/ewm.png}"/></a>
+                    <a href="/portal/cart/toCartPage"><img th:src="@{/portal/img/gwc.png}"/></a>
+                    <p><a href="#"><img th:src="@{/portal/img/smewm.png}"/></a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="order mt cart" style="margin-top: 10px;height: 421px" >
+    <p class="ok">商品不存在或已被删除 <a href="/portal/index.html">返回首页</a></p>
+</div>
+<!--footer-->
+<div class="footer">
+    <div class="top">
+        <div class="wrapper">
+            <div class="clearfix">
+                <a href="#2" class="fl"><img src="/portal/img/foot1.png"/></a>
+                <span class="fl">7天无理由退货</span>
+            </div>
+            <div class="clearfix">
+                <a href="#2" class="fl"><img src="/portal/img/foot2.png"/></a>
+                <span class="fl">15天免费换货</span>
+            </div>
+            <div class="clearfix">
+                <a href="#2" class="fl"><img src="/portal/img/foot3.png"/></a>
+                <span class="fl">满599包邮</span>
+            </div>
+            <div class="clearfix">
+                <a href="#2" class="fl"><img src="/portal/img/foot4.png"/></a>
+                <span class="fl">售后服务咨询</span>
+            </div>
+        </div>
+    </div>
+    <p class="dibu">杰森服装商城&copy;Jack<br/>
+    </p>
+</div>
+<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/portal/js/public.js" type="text/javascript" charset="utf-8"></script>
+<script src="/portal/js/jquery.SuperSlide.2.1.1.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    jQuery(".bottom").slide({titCell:".hd ul",mainCell:".bd .likeList",autoPage:true,autoPlay:false,effect:"leftLoop",autoPlay:true,vis:1});
+</script>
+</body>
+</html>

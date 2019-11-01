@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>登录</title>
+		<link rel="stylesheet" type="text/css" href="css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="css/login.css"/>
+	</head>
+	<body>
+		<!-------------------login-------------------------->
+		<div class="login">
+			<form action="#" method="get">
+				<h1><a href="index.html"><img src="/portal/img/logo.png"></a></h1>
+				<p></p>
+				<div class="msg-warn hide"><b></b>公共场所请注意密码保护</div>
+				<p><input type="text" name="" value="" placeholder="昵称" id="username"></p>
+				<p><input type="password" name="" value="" placeholder="密码" id="password"></p>
+				<p class="txtL txt">
+					<input class="code" type="text" name="" value="" placeholder="验证码" id="verifyCode">
+					<img src="/kaptcha/render" id="verifyImg" style="cursor: pointer">
+				</p>
+				<p><input type="submit" name="" value="登  录" style="cursor: pointer"></p>
+				<p class="txt"><a class="" id="regPage" href="/portal/register.html">免费注册</a></p>
+			</form>
+		</div>
+		<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+            var redirectURL = "";//加密的URL
+			$(function () {
+                var params = location.search; //获取url中"?"符及其后的字串
+                if (params.indexOf("?") != -1) {
+                    var str = params.substr(1);
+                    var requestParam = str.split("&");
+                    if (requestParam.length == 1) {
+                        var keyAndValue = requestParam[0].split("=");
+                        if (keyAndValue[0] == "redirectURL") {
+                            redirectURL = keyAndValue[1];
+                        }
+                    }
+                }
+                if(redirectURL!=""){
+                    var string = "/portal/register.html"+"?redirectURL="+redirectURL;
+                    $("#regPage").attr("href",string);
+                }
+            });
+            $("#verifyImg").click(function(){
+                $(this).attr("src","/kaptcha/render?id="+Math.random());
+            });
+
+            $("form").submit(function () {
+                var username = $("#username").val();
+                var password = $("#password").val();
+                var verifyCode = $("#verifyCode").val();
+                if($.trim(username)==""){
+                    alert("请输入用户名");
+                    return false;
+				}
+                if($.trim(password)==""){
+                    alert("请输入密码");
+                    return false;
+                }
+                if($.trim(verifyCode)==""){
+                    alert("请输入验证码");
+                    return false;
+                }
+                $.ajax({
+                    type : "POST",  //提交方式
+                    url : "/portal/user/login",//路径
+                    data : {"username":username,"password":password,"verifyCode":verifyCode},
+					success : function(res) {//返回数据根据结果进行相应的处理
+						if(res.code==200){
+							if(redirectURL==""){
+								window.location.href = "/portal/index.html";
+							}else {
+								window.location.href = window.atob(redirectURL);//解密url，并且跳转到对应的页面
+							}
+                            //重新生成验证码，验证码校验成功时也需要重新生成，否则如果成功登录后点击浏览器返回按钮，此时kaptcha会因为内部未生成验证码而产生空指针异常
+                            $("#verifyImg").attr("src","/kaptcha/render?id="+Math.random());
+						}else{
+							alert(res.msg);
+							$("#verifyImg").attr("src","/kaptcha/render?id="+Math.random());
+						}
+					}
+                });
+                return false;//阻止表单重复提交
+            });
+		</script>
+	</body>
+
+</html>

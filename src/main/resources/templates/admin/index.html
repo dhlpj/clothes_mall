@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>服装商城后台管理系统</title>
+  <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo" id="logo">
+      杰森服装 管理系统
+    </div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-right" lay-filter="topNav">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <span th:text="${session.adminUsername}">Jack</span>
+        </a>
+      </li>
+      <li class="layui-nav-item"><a href="javascript:;" id="logout">注销</a></li>
+    </ul>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="leftNav">
+        <li class="layui-nav-item layui-nav-itemed"><!--layui-nav-itemed页面刷新时自动展开-->
+          <a class="" href="javascript:;">商品管理</a><!--layui-this指向当前页面分类。-->
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;" name="category">分类管理</a></dd>
+            <dd><a href="javascript:;" name="product">商品列表</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">订单管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;" name="order">订单列表</a></dd>
+            <!--<dd><a href="" lay-unselect>刷新</a></dd> 点击之后不会选中-->
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">个人管理</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;" name="changePwd">密码修改</a></dd>
+          </dl>
+        </li>
+      </ul>
+    </div>
+  </div>
+      
+  <div class="layui-body">
+    <div class="layui-tab layui-tab-brief" lay-filter="tabField" lay-allowclose="true" style="margin: auto;">
+    	<ul class="layui-tab-title">
+    		<li class="layui-this" name="index" lay-id="indexTab">首页</li>
+    	</ul>
+    	<div class="layui-tab-content" style="padding:0;"> 
+    		<div class="layui-tab-item layui-show">
+    			welcome to Json mall!
+    		</div>
+    	</div>
+    </div>
+  </div>
+  
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © Jack - Json mall
+  </div>
+</div>
+
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+//注意：导航 依赖 element 模块，否则无法进行功能性操作
+layui.use(['element','layer'], function(){
+	var $ = layui.jquery;
+    var element = layui.element;
+    var layer = layui.layer;
+    $("#logo").on("click",function () {
+        element.tabChange('tabField', "indexTab");
+    });
+    //点击左侧的按钮跳转的事件
+    element.on('nav(leftNav)',function (elem) {//elem代表点击的DOM对象
+      var $obj = $(elem);
+      var name = $obj.attr("name");
+      var text = $obj.html();
+      if(!name){//点击的nav不存在name属性(如:左侧的父类目)，返回
+          return;
+      }
+      var lay_id = name + "Tab";//定义tab页的lay-id
+      //判断tab是否存在
+      var index = $("li[lay-id="+lay_id+"]").index();//返回指定lay-id在li中同辈元素的索引位置,如果tab不存在返回-1
+      if(index>0){//存在且非首页，刷新
+          var src=$(".layui-tab-content>div").eq(index).find("iframe").attr("src");
+              $(".layui-tab-content>div").eq(index).find("iframe").attr("src",src);
+      }else{//不存在创建
+          element.tabAdd('tabField', {
+          title: text,
+          content: "<iframe src='./"+name+".html' scrolling='auto' frameborder='0' style='position:absolute;margin:auto;height:100%;width:100%;'></iframe>",
+          id: lay_id
+          });
+      }
+      //跳转到指定的tab
+      element.tabChange('tabField', lay_id);
+    });
+    //注销
+    $("#logout").on("click",function(){
+        $.ajax({
+            type: "DELETE",
+            url: "/admin/logout",
+            success: function(data){
+                if(data.code==200){
+                    layer.msg('注销成功', {
+                        icon: 1
+                    });
+                    window.location.href = "/admin/login.html";
+                }else{
+                    layer.alert(data.msg, {
+                        icon: 2
+                    });
+                }
+            }
+        });
+    });
+  //点击tabTitle跳转的事件
+  /*element.on('tab(tabField)', function(data){
+  	var index = data.index;//当前tab所在的下标
+  	if(index>0){//非首页，刷新
+  		var src=$(".layui-tab-content>div").eq(index).find("iframe").attr("src");
+			$(".layui-tab-content>div").eq(index).find("iframe").attr("src",src);
+  	}
+	});*/
+});
+</script>
+</body>
+</html>

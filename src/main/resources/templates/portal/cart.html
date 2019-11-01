@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head lang="en">
+		<meta charset="utf-8" />
+		<title>购物车</title>
+		<link rel="stylesheet" type="text/css" href="/portal/css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="/portal/css/proList.css" />
+	</head>
+	<body>
+		<!--------------------------------------cart--------------------->
+		<div class="head">
+			<div class="wrapper clearfix">
+				<div class="clearfix" id="top">
+					<h1 class="fl">
+						<a th:href="@{/portal/index.html}">
+							<img th:src="@{/portal/img/logo.PNG}"/>
+						</a>
+					</h1>
+					<div class="fr clearfix" id="top1">
+						<p class="fl">
+							<span th:if="${session.username}" th:text="|欢迎您: ${session.username}|">jack</span>
+							<a th:if="${session.username}" href="#" id="logout">退出</a>
+							<a th:if="${session.username}==null" href="/portal/login.html" id="login">登录</a>
+							<a th:if="${session.username}==null" href="/portal/register.html" id="reg">注册</a>
+						</p>
+						<form action="#" method="get" class="fl" id="searchForm">
+							<input type="text" placeholder="热门搜索：T恤"/>
+							<input type="button"/>
+						</form>
+						<div class="btn fl clearfix">
+							<a href="/portal/user/toHomePage"><img th:src="@{/portal/img/grzx.png}"/></a>
+							<a href="/portal/cart/toCartPage"><img th:src="@{/portal/img/gwc.png}"/></a>
+							<p><a href="#"><img th:src="@{/portal/img/smewm.png}"/></a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="cart mt" style="margin-top: 10px">
+			<!-----------------site------------------->
+			<div class="site">
+				<p class=" wrapper clearfix">
+					<span class="fl">购物车</span>
+					<img class="top" src="/portal/img/temp/cartTop01.png">
+					<a href="/portal/index.html" class="fr">继续购物&gt;</a>
+				</p>
+			</div>
+			<!-----------------table------------------->
+			<div class="table wrapper">
+				<div class="tr">
+					<div>商品</div>
+					<div>单价</div>
+					<div>数量</div>
+					<div>小计</div>
+					<div>操作</div>
+				</div>
+				<div class="th" th:if="${cartItems}!=null" th:each="cartItem:${cartItems}"  th:attr="itemId=${cartItem.id}">
+					<div class="pro clearfix">
+						<label class="fl">
+							<input type="checkbox" th:if="${cartItem.valid}==true"/><!--商品有效才显示-->
+							<span></span>
+						</label>
+						<a class="fl" th:if="${cartItem.valid}==true"  th:href="@{/portal/product/productDetail(productId=${cartItem.productId},colorId=${cartItem.colorId})}" target="_blank">
+							<dl class="clearfix">
+								<dt class="fl"><img th:src="${cartItem.image}" style="width: 120px;height: 120px"></dt>
+								<dd class="fl">
+									<p th:text="${cartItem.name}">T恤</p>
+									<p th:text="|颜色: ${cartItem.colorName}|">颜色: 白色</p>
+									<p th:text="|尺寸: ${cartItem.sizeName}|">尺寸: S</p>
+								</dd>
+							</dl>
+						</a>
+						<a class="fl" th:if="${cartItem.valid}==false" th:href="'#'">
+							<dl class="clearfix">
+								<dt class="fl"><img th:src="${cartItem.image}" style="width: 120px;height: 120px"></dt>
+								<dd class="fl">
+									<p th:text="${cartItem.name}">T恤</p>
+									<p th:text="|颜色: ${cartItem.colorName}|">颜色分类: 白色</p>
+									<p th:text="|尺寸: ${cartItem.sizeName}|">尺寸: S</p>
+									<p>已失效</p>
+								</dd>
+							</dl>
+						</a>
+					</div>
+					<div class="price" th:if="${cartItem.valid}==true" th:text="|￥${cartItem.price/100}|">￥59.99</div>
+					<div class="price" th:if="${cartItem.valid}==false" th:text="''">￥59.99</div>
+					<div class="number">
+						<p class="num clearfix"  th:if="${cartItem.valid}==true">
+							<img class="fl sub" src="/portal/img/temp/sub.jpg">
+							<span class="fl" th:text="${cartItem.num}">1</span>
+							<img class="fl add" src="/portal/img/temp/add.jpg">
+						</p>
+					</div>
+					<div class="price sAll" th:if="${cartItem.valid}==true" th:text="|￥${cartItem.totalPrice/100}|">￥59.99</div>
+					<div class="price sAll" th:if="${cartItem.valid}==false" th:text="''">￥59.99</div>
+					<div class="price"><a class="del" href="#2">删除</a></div>
+				</div>
+				<!--不为空的话隐藏-->
+				<div class="goOn" th:if="${cartItems!=null&&cartItems.size()&gt0}">空空如也~<a href="/portal/index.html">去逛逛</a></div>
+				<!--为空直接显示-->
+				<div class="goOn" th:if="${cartItems==null||cartItems.size()==0}" style="display: block">空空如也~<a href="/portal/index.html">去逛逛</a></div>
+				<div class="tr clearfix">
+					<label class="fl">
+						<input class="checkAll" type="checkbox"/>
+						<span></span>
+					</label>
+					<p class="fl">
+						<a href="#">全选</a>
+						<a href="#" class="del">删除</a>
+					</p>
+					<p class="fr">
+						<span>共<small id="sl">0</small>件商品</span>
+						<span>合计:&nbsp;<small id="all">￥0.00</small></span>
+						<a href="#" class="count" id="pay">结算</a>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="mask"></div>
+		<div class="pleaseC">
+			<p>请选择宝贝</p>
+			<img class="off" src="/portal/img/temp/off.jpg" />
+		</div>
+		<div class="tipDel">
+			<p>确定要删除该商品吗？</p>
+			<p class="clearfix">
+				<a class="fl cer" href="#">确定</a>
+				<a class="fr cancel" href="#">取消</a>
+			</p>
+		</div>
+		<!--返回顶部-->
+		<div class="gotop">
+			<a href="/portal/cart/toCartPage">
+			<dl>
+				<dt><img src="/portal/img/gt1.png"/></dt>
+				<dd>去购<br />物车</dd>
+			</dl>
+			</a>
+			<a href="#" class="dh">
+			<dl>
+				<dt><img src="/portal/img/gt2.png"/></dt>
+				<dd>联系<br />客服</dd>
+			</dl>
+			</a>
+			<a href="/portal/user/toHomePage">
+			<dl>
+				<dt><img src="/portal/img/gt3.png"/></dt>
+				<dd>个人<br />中心</dd>
+			</dl>
+			</a>
+			<a href="#" class="toptop" style="display: none;">
+			<dl>
+				<dt><img src="/portal/img/gt4.png"/></dt>
+				<dd>返回<br />顶部</dd>
+			</dl>
+			</a>
+			<p>400-800-8200</p>
+		</div>
+		<!--footer-->
+		<div class="footer">
+			<div class="top">
+				<div class="wrapper">
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot1.png"/></a>
+						<span class="fl">7天无理由退货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot2.png"/></a>
+						<span class="fl">15天免费换货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot3.png"/></a>
+						<span class="fl">满599包邮</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot4.png"/></a>
+						<span class="fl">售后服务咨询</span>
+					</div>
+				</div>
+			</div>
+			<p class="dibu">杰森服装商城&copy;Jack<br/>
+			</p>
+		</div>
+
+		<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/nav.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/pro.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/cart.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+</html>

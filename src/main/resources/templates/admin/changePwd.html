@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Insert title here</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <script th:src="@{/layui/layui.js}"></script>
+</head>
+<body>
+<div class="layui-col-md12">
+    <div class="layui-card">
+        <div class="layui-card-header">修改密码</div>
+        <div class="layui-card-body" pad15="">
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">当前密码</label>
+                    <div class="layui-input-inline">
+                        <input name="oldPassword" id="oldPassword" lay-verify="required" class="layui-input"
+                               type="password">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">新密码</label>
+                    <div class="layui-input-inline">
+                        <input name="newPassword" id="newPassword" lay-verify="required" class="layui-input"
+                               type="password">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">确认新密码</label>
+                    <div class="layui-input-inline">
+                        <input name="rePassword" id="rePassword" lay-verify="required" class="layui-input"
+                               type="password">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit="" lay-filter="changePwd">确认修改</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form', 'layedit', 'layer'], function () {
+        var $ = layui.jquery;
+        var form = layui.form;
+        var layer = layui.layer;
+        var layedit = layui.layedit;
+        form.render();
+
+        //监听提交
+        form.on('submit(changePwd)', function (data) {
+            /* layer.alert(JSON.stringify(data.field), {
+              title: '最终的提交信息'
+            }) */
+            var oldPassword = $("#oldPassword").val();
+            var newPassword = $("#newPassword").val();
+            var rePassword = $("#rePassword").val();
+            var flag = false;//验证密码出错的标志
+            if (newPassword != rePassword) {
+                layer.alert("两次输入的密码不一致", {
+                    icon: 2
+                });
+                return false;
+            }
+            $.ajax({
+                url: "/admin/validatePassword",
+                type: "POST",
+                async: false,
+                data: {
+                    oldPassword: oldPassword
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.code != 200) {
+                        flag = true;
+                        layer.alert(data.msg, {
+                            icon: 2
+                        });
+                    }
+                }
+            });
+            if(flag){
+                return false;
+            }
+            $.ajax({
+                url: "/admin/changePwd",
+                type: "PUT",
+                data: {newPassword: newPassword},
+                dataType: "json",
+                success: function (data) {
+                    if (data.code == 200) {
+                        alert("修改密码成功");
+                        window.location.href = "/admin/login.html";
+                    } else {
+                        layer.alert("修改密码失败", {
+                            icon: 2
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>

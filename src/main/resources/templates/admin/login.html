@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>后台管理系统-登陆</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}">
+    <link rel="stylesheet" th:href="@{/layuiadmin/style/login.css}">
+</head>
+<body>
+
+<div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+
+    <div class="layadmin-user-login-main">
+        <div class="layadmin-user-login-box layadmin-user-login-header">
+            <h2>登陆</h2>
+            <p>管理系统</p>
+        </div>
+        <form class="layadmin-user-login-box layadmin-user-login-body layui-form">
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="login-username"></label>
+                <input type="text" name="username" id="login-username" lay-verify="required" placeholder="用户名" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="login-password"></label>
+                <input type="password" name="password" id="login-password" lay-verify="required" placeholder="密码" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-row">
+                    <div class="layui-col-xs7">
+                        <label class="layadmin-user-login-icon layui-icon layui-icon-vercode" for="LAY-user-login-vercode"></label>
+                        <input type="text" name="verifyCode" id="login-vercode" lay-verify="required" placeholder="图形验证码" class="layui-input">
+                    </div>
+                    <div class="layui-col-xs5">
+                        <div style="margin-left: 10px;">
+                            <img th:src="@{/kaptcha/render}" id="code_img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="layui-trans layadmin-user-login-footer">
+
+        <p>© 2019 Jack</p>
+        <p>
+            <span><a th:href="@{/protal/index.html}" target="_blank">前往商城首页</a></span>
+        </p>
+    </div>
+
+</div>
+
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+
+    layui.use(['form', 'jquery'], function(){
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var router = layui.router();
+        var search = router.search;
+        form.render();
+        $(document).ready(function () {
+            if (window != top) {
+                top.location.href = location.href;
+            }
+        });
+
+        $(function(){
+            $("#code_img").click(function(){
+                $(this).attr("src","/kaptcha/render?id="+Math.random());
+            });
+        });
+
+        //提交
+        form.on('submit(LAY-user-login-submit)', function(obj){
+            $.ajax({
+                type : "POST",  //提交方式
+                url : "/admin/login",//路径
+                data : obj.field, //数据，这里使用的是Json格式进行传输
+                dataType: "json",
+                success : function(res) {//返回数据根据结果进行相应的处理
+                    if(res.code==200){
+                        window.location.href = "/admin/index.html";
+                        //重新生成验证码，验证码校验成功时也需要重新生成，否则如果成功登录后点击浏览器返回按钮，此时kaptcha会因为内部未生成验证码而产生空指针异常
+                        $("#code_img").attr("src","/kaptcha/render?id="+Math.random());
+                    }else{
+                        layer.alert(res.msg, {
+                            icon: 2
+                        });
+                        $("#code_img").attr("src","/kaptcha/render?id="+Math.random());
+                    }
+                }
+            });
+            return false;//防止跳转，二次提交
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+		<head lang="en">
+			<meta charset="utf-8" />
+			<title>修改密码</title>
+			<link rel="stylesheet" type="text/css" href="/portal/css/public.css"/>
+			<link rel="stylesheet" type="text/css" href="/portal/css/mygrxx.css" />
+		</head>
+		<body>
+		<!------------------------------head------------------------------>
+		<div class="head ding">
+			<div class="wrapper clearfix">
+				<div class="clearfix" id="top">
+					<h1 class="fl"><a href="/portal/index.html"><img src="/portal/img/logo.png"/></a></h1>
+				</div>
+			</div>
+		</div>
+		<!------------------------------idea------------------------------>
+		<div class="address mt">
+			<div class="wrapper clearfix">
+				<a href="/portal/index.html" class="fl">首页</a>
+				<span>/</span>
+				<a href="/portal/user/toHomePage">个人中心</a>
+				<span>/</span>
+				<a href="/portal/user/toChangePwdPage" class="on">修改密码</a>
+			</div>
+		</div>
+		
+		<!------------------------------Bott------------------------------>
+		<div class="Bott">
+			<div class="wrapper clearfix">
+				<div class="zuo fl">
+					<h3>
+						<a href="#"><img src="/portal/img/tx.png"/></a>
+						<p class="clearfix"><span class="fl" th:text="${session.username}">Jack</span><span class="fr" id="logout">退出登录</span></p>
+					</h3>
+					<div>
+						<h4>我的交易</h4>
+						<ul>
+							<li><a href="/portal/cart/toCartPage">我的购物车</a></li>
+							<li><a href="/portal/user/toOrderPage">我的订单</a></li>
+						</ul>
+						<h4>个人中心</h4>
+						<ul>
+							<li ><a href="/portal/user/toHomePage">我的中心</a></li>
+							<li><a href="/portal/user/toShippingPage">地址管理</a></li>
+						</ul>
+						<h4>账户管理</h4>
+						<ul>
+							<li class="on"><a href="/portal/changePwd.html">修改密码</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="you fl">
+					<h2>修改密码</h2>
+					<form action="#" method="get" class="remima" id="changePwdForm">
+						<p><span>原密码：</span><input type="password" id="oldPassword" /></p>
+						<p class="op">输入原密码</p>
+						<p><span>新密码：</span><input type="password" id="newPassword"/></p>
+						<p class="op">输入新密码</p>
+						<p><span>重复新密码：</span><input type="password" id="rePassword"/></p>
+						<p class="op">请再次输入密码</p>
+						<input type="submit" value="提交" style="cursor: pointer;"/>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<!--返回顶部-->
+		<div class="gotop">
+			<a href="/portal/cart/toCartPage">
+			<dl>
+				<dt><img src="/portal/img/gt1.png"/></dt>
+				<dd>去购<br />物车</dd>
+			</dl>
+			</a>
+			<a href="#" class="dh">
+			<dl>
+				<dt><img src="/portal/img/gt2.png"/></dt>
+				<dd>联系<br />客服</dd>
+			</dl>
+			</a>
+			<a href="/portal/user/toHomePage">
+			<dl>
+				<dt><img src="/portal/img/gt3.png"/></dt>
+				<dd>个人<br />中心</dd>
+			</dl>
+			</a>
+			<a href="#" class="toptop" style="display: none">
+			<dl>
+				<dt><img src="/portal/img/gt4.png"/></dt>
+				<dd>返回<br />顶部</dd>
+			</dl>
+			</a>
+			<p>400-800-8200</p>
+		</div>
+		<!--footer-->
+		<div class="footer">
+			<div class="top">
+				<div class="wrapper">
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot1.png"/></a>
+						<span class="fl">7天无理由退货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot2.png"/></a>
+						<span class="fl">15天免费换货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot3.png"/></a>
+						<span class="fl">满599包邮</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot4.png"/></a>
+						<span class="fl">售后服务咨询</span>
+					</div>
+				</div>
+			</div>
+			<p class="dibu">杰森服装商城&copy;Jack<br/>
+			</p>
+		</div>
+		<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/user.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			$("#changePwdForm").submit(function () {
+                var oldPassword = $("#oldPassword").val();
+                var newPassword = $("#newPassword").val();
+                var rePassword = $("#rePassword").val();
+                if (oldPassword == "") {
+                    alert("请输入原密码")
+                    return false;
+                }
+                if(newPassword == ""){
+                    alert("请输入新密码")
+                    return false;
+				}
+                if (newPassword != rePassword) {
+                    alert("两次密码输入不一致")
+                    return false;
+                }
+                $.ajax({
+                    url: "/portal/user/changePwd",
+                    type: "PUT",
+                    data: {oldPassword:oldPassword,newPassword: newPassword},
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code == 200) {
+                            alert("修改密码成功");
+                            window.location.href = "/portal/index.html";
+                        } else {
+                            alert(data.msg);
+                        }
+                    }
+                });
+                return false;
+            });
+            $("#logout").on("click",function(){
+                $.ajax({
+                    type: "DELETE",
+                    url: "/portal/user/logout",
+                    success: function(data){
+                        if(data.code==200){
+                            alert("注销成功")
+                            window.location.reload();
+                        }else{
+                            alert(data.msg);
+                        }
+                    }
+                });
+            });
+		</script>
+	</body>
+</html>

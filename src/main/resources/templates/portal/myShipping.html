@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+		<head lang="en">
+			<meta charset="utf-8" />
+			<title>我的收货地址</title>
+			<link rel="stylesheet" type="text/css" href="/portal/css/public.css"/>
+			<link rel="stylesheet" type="text/css" href="/portal/css/mygxin.css" />
+		</head>
+		<body>
+		<!------------------------------head------------------------------>
+		<div class="head ding">
+			<div class="wrapper clearfix">
+				<div class="clearfix" id="top">
+					<h1 class="fl"><a href="/portal/index.html"><img src="/portal/img/logo.png"/></a></h1>
+				</div>
+			</div>
+		</div>
+		<!------------------------------idea------------------------------>
+		<div class="address mt">
+			<div class="wrapper clearfix">
+				<a href="/portal/index.html" class="fl">首页</a>
+				<span>/</span>
+				<a href="/portal/user/toHomePage">个人中心</a>
+				<span>/</span>
+				<a href="/portal/user/toShippingPage" class="on">我的订单</a>
+			</div>
+		</div>
+
+		<!------------------------------Bott------------------------------>
+		<div class="Bott">
+			<div class="wrapper clearfix">
+				<div class="zuo fl">
+					<h3>
+						<a href="#"><img src="/portal/img/tx.png"/></a>
+						<p class="clearfix"><span class="fl" th:text="${session.username}">Jack</span><span class="fr" id="logout">退出登录</span></p>
+					</h3>
+					<div>
+						<h4>我的交易</h4>
+						<ul>
+							<li><a href="/portal/cart/toCartPage">我的购物车</a></li>
+							<li><a href="/portal/user/toOrderPage">我的订单</a></li>
+						</ul>
+						<h4>个人中心</h4>
+						<ul>
+							<li ><a href="/portal/user/toHomePage">我的中心</a></li>
+							<li class="on"><a href="/portal/user/toShippingPage">地址管理</a></li>
+						</ul>
+						<h4>账户管理</h4>
+						<ul>
+							<li><a href="/portal/user/toChangePwdPage">修改密码</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="you fl">
+					<h2>收货地址</h2>
+					<div class="add">
+						<div>
+							<a href="#2" id="addxad"><img src="/portal/img/jia.png"/></a>
+							<span>添加新地址</span>
+						</div>
+						<div class="dizhi" th:each="shipping : ${shippings}" th:shippingid="${shipping.id}">
+							<p th:text="${shipping.receiver}">张三</p>
+							<p th:text="${shipping.mobile}">1573123666</p>
+							<p th:text="|${shipping.province} ${shipping.city} ${shipping.district}|">四川省 攀枝花市 东区</p>
+							<p th:text="${shipping.address}">攀大</p>
+							<p th:text="${shipping.zip}">000000</p>
+						</div>
+					</div>		
+				</div>
+			</div>
+		</div>
+		<!--编辑弹框-->
+		<!--遮罩-->
+		<div class="mask"></div>
+		<div class="adddz editAddre">
+			<form action="#" method="POST">
+				<input type="hidden" name="id">
+				<input type="text" name="receiver" placeholder="姓名" class="on" />
+				<input type="text" name="mobile" placeholder="手机号" />
+				<input type="text" name="province" placeholder="省份/自治区">
+				<input type="text" name="city" placeholder="城市/地区">
+				<input type="text" name="district" placeholder="区/县">
+				<input type="text" name="address" placeholder="详细地址"/>
+				<input type="text" name="zip" placeholder="邮政编码" />
+				<div class="bc shippingBtn">
+					<input type="button" value="保存" />
+					<input type="button" value="取消" />
+				</div>
+			</form>
+		</div>
+		<!--返回顶部-->
+		<div class="gotop">
+			<a href="/portal/cart/toCartPage">
+			<dl>
+				<dt><img src="/portal/img/gt1.png"/></dt>
+				<dd>去购<br />物车</dd>
+			</dl>
+			</a>
+			<a href="#" class="dh">
+			<dl>
+				<dt><img src="/portal/img/gt2.png"/></dt>
+				<dd>联系<br />客服</dd>
+			</dl>
+			</a>
+			<a href="/portal/user/toHomePage">
+			<dl>
+				<dt><img src="/portal/img/gt3.png"/></dt>
+				<dd>个人<br />中心</dd>
+			</dl>
+			</a>
+			<a href="#" class="toptop" style="display: none">
+			<dl>
+				<dt><img src="/portal/img/gt4.png"/></dt>
+				<dd>返回<br />顶部</dd>
+			</dl>
+			</a>
+			<p>400-800-8200</p>
+		</div>
+		
+		<!--footer-->
+		<div class="footer">
+			<div class="top">
+				<div class="wrapper">
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot1.png"/></a>
+						<span class="fl">7天无理由退货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot2.png"/></a>
+						<span class="fl">15天免费换货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot3.png"/></a>
+						<span class="fl">满599包邮</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot4.png"/></a>
+						<span class="fl">售后服务咨询</span>
+					</div>
+				</div>
+			</div>
+			<p class="dibu">杰森服装商城&copy;Jack<br/>
+			</p>
+		</div>
+		<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/user.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+            $("#logout").on("click",function(){
+                $.ajax({
+                    type: "DELETE",
+                    url: "/portal/user/logout",
+                    success: function(data){
+                        if(data.code==200){
+                            alert("注销成功")
+                            window.location.reload();
+                        }else{
+                            alert(data.msg);
+                        }
+                    }
+                });
+            });
+		</script>
+	</body>
+</html>

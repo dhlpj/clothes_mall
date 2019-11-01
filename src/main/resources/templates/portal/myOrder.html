@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head lang="en">
+		<meta charset="utf-8" />
+		<title>我的订单</title>
+		<link rel="stylesheet" type="text/css" href="/portal/css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="/portal/css/myorder.css" />
+	</head>
+	<body>
+		<!------------------------------head------------------------------>
+		<div class="head ding">
+			<div class="wrapper clearfix">
+				<div class="clearfix" id="top">
+					<h1 class="fl"><a href="/portal/index.html"><img src="/portal/img/logo.png"/></a></h1>
+				</div>
+			</div>
+		</div>
+		<!------------------------------idea------------------------------>
+		<div class="address mt">
+			<div class="wrapper clearfix">
+				<a href="/portal/index.html" class="fl">首页</a>
+				<span>/</span>
+				<a href="/portal/user/toHomePage">个人中心</a>
+				<span>/</span>
+				<a href="/portal/user/toOrderPage" class="on">我的订单</a>
+			</div>
+		</div>
+		
+		<!------------------------------Bott------------------------------>
+		<div class="Bott">
+			<div class="wrapper clearfix">
+				<div class="zuo fl">
+					<h3>
+						<a href="#"><img src="/portal/img/tx.png"/></a>
+						<p class="clearfix"><span class="fl" th:text="${session.username}">Jack</span><span class="fr" id="logout">退出登录</span></p>
+					</h3>
+					<div>
+						<h4>我的交易</h4>
+						<ul>
+							<li><a href="/portal/cart/toCartPage">我的购物车</a></li>
+							<li class="on"><a href="/portal/user/toOrderPage">我的订单</a></li>
+						</ul>
+						<h4>个人中心</h4>
+						<ul>
+							<li ><a href="/portal/user/toHomePage">我的中心</a></li>
+							<li><a href="/portal/user/toShippingPage">地址管理</a></li>
+						</ul>
+						<h4>账户管理</h4>
+						<ul>
+							<li><a href="/portal/user/toChangePwdPage">修改密码</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="you fl">
+					<div class="my clearfix">
+						<h2 class="fl">我的订单</h2>
+					</div>
+					<!--筛选订单-->
+					<div class="dlist clearfix">
+						<ul class="fl clearfix" id="wa">
+							<li th:classappend="${status} ? '':'on'"><a href="/portal/user/toOrderPage">全部订单</a></li>
+							<li th:classappend="${status}==1 ? 'on':''"><a href="/portal/user/toOrderPage?status=1">待支付</a></li>
+							<li th:classappend="${status}==2 ? 'on':''"><a href="/portal/user/toOrderPage?status=2">待发货</a></li>
+							<li th:classappend="${status}==3 ? 'on':''"><a href="/portal/user/toOrderPage?status=3">待收货</a></li>
+							<li th:classappend="${status}==4 ? 'on':''"><a href="/portal/user/toOrderPage?status=4">待评价</a></li>
+							<li th:classappend="${status}==5 ? 'on':''"><a href="/portal/user/toOrderPage?status=5">已关闭</a></li>
+							<li th:classappend="${status}==6 ? 'on':''"><a href="/portal/user/toOrderPage?status=6">已评价</a></li>
+						</ul>
+					</div>
+					<div class="dkuang"  th:attr="id=${order.orderId}" th:classappend="${order.status}!=5 ? 'deng':''" th:each="order : ${pageResult.data}" th:switch="${order.status}">
+						<p class="one" th:case="'1'">
+							待支付
+							<a href="#" class="del">删除</a>
+						</p>
+						<p class="one" th:case="'2'">
+							待发货
+							<a href="#" class="del">删除</a>
+						</p>
+						<p class="one" th:case="'3'">
+							待收货
+							<a href="#" class="del">删除</a>
+						</p>
+						<p class="one" th:case="'4'">
+							待评价
+							<a href="#" class="del">删除</a>
+						</p>
+						<p class="one" th:case="'5'">
+							已关闭
+							<a href="#" class="del">删除</a>
+						</p>
+						<p class="one" th:case="'6'">
+							已评价
+							<a href="#" class="del">删除</a>
+						</p>
+						<div class="word clearfix">
+							<ul class="fl clearfix">
+								<li th:text="${#dates.format(order.createTime, 'yyyy-MM-dd')}">2019年12月1日 18:53</li>
+								<li th:text="${order.receiver}">张三</li>
+								<li th:text="|订单号:${order.orderId}|">订单号:5160513358520018</li>
+								<li th:text="${order.paymentType}==1 ? '在线支付':'货到付款'"></li>
+							</ul>
+							<p class="fr">订单金额：<span th:text="${order.totalPay/100}">99.00</span>元</p>
+						</div>
+						<div class="shohou clearfix" th:each="orderDetail,stat : ${order.orderDetails}" th:productid="${orderDetail.productId}" th:orderdetailid="${orderDetail.id}">
+							<a target="_blank" th:href="@{/portal/product/productDetail(productId=${orderDetail.productId},colorId=${orderDetail.colorId})}" class="fl"><img th:src="${orderDetail.image}"/></a>
+							<p class="fl">
+								<a target="_blank" th:href="@{/portal/product/productDetail(productId=${orderDetail.productId},colorId=${orderDetail.colorId})}" th:text="${orderDetail.name}">T恤</a>
+								<a href="#" th:text="|颜色：${orderDetail.colorName}|">颜色:黑色</a>
+								<a href="#" th:text="|尺寸：${orderDetail.sizeName}|">尺寸:S</a>
+								<a href="#" th:text="|¥${orderDetail.price/100}x${orderDetail.num}|">¥99.00×1</a>
+							</p>
+							<p class="fr">
+								<a href="#" th:if="${order.status==1&&stat.last}" th:classappend="payOrder">去支付</a>
+								<a href="#" th:if="${order.status==2||order.status==5}" style="display: none"></a>
+								<a href="#" th:if="${order.status==3&&stat.last}" th:classappend="confirmOrder">确认收货</a>
+								<a href="#" th:if="${order.status==4&&stat.last}" th:classappend="commentOrder">去评价</a>
+								<a href="#" th:if="${order.status==6&&stat.last}" th:classappend="commentDetail">查看评价</a>
+								<a th:href="@{/portal/user/toOrderDetailPage(orderId=${order.orderId})}" th:if="${stat.last}">订单详情</a>
+							</p>
+						</div>
+					</div>
+					<div class="fenye clearfix" th:if="${totalPage}!=0">
+						<a th:href="@{/portal/user/toOrderPage(status=${status},page=${currentPage-1})}" th:styleappend="${currentPage==1} ? 'display:none':''">
+							<img src="/portal/img/zuo.jpg"/>
+						</a>
+						<a href="#" th:text="${currentPage}" class="pageCount"></a>
+						<a th:href="@{/portal/user/toOrderPage(status=${status},page=${currentPage+1})}" th:styleappend="${currentPage==totalPage} ? 'display:none':''">
+							<img src="/portal/img/you.jpg"/>
+						</a>
+					</div>
+					<div class="fenye clearfix" th:if="${totalPage}==0">
+						无订单信息
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--遮罩-->
+		<div class="mask"></div>
+
+		<!--评价弹框-->
+		<div class="pj">
+			<div class="clearfix"><a href="#" class="fr gb"><img src="/portal/img/icon4.png"/></a></div>
+			<h3>商品评价</h3>
+			<form action="#" method="POST">
+				<input type="hidden" id="orderId">
+				<div class="bc commentBtn">
+					<input type="button" value="保存"  />
+					<input type="button" value="取消" />
+				</div>
+			</form>
+		</div>
+
+		<!--返回顶部-->
+		<div class="gotop">
+			<a href="/portal/cart/toCartPage">
+			<dl>
+				<dt><img src="/portal/img/gt1.png"/></dt>
+				<dd>去购<br />物车</dd>
+			</dl>
+			</a>
+			<a href="#" class="dh">
+			<dl>
+				<dt><img src="/portal/img/gt2.png"/></dt>
+				<dd>联系<br />客服</dd>
+			</dl>
+			</a>
+			<a href="/portal/user/toHomePage">
+			<dl>
+				<dt><img src="/portal/img/gt3.png"/></dt>
+				<dd>个人<br />中心</dd>
+			</dl>
+			</a>
+			<a href="#" class="toptop" style="display: none">
+			<dl>
+				<dt><img src="/portal/img/gt4.png"/></dt>
+				<dd>返回<br />顶部</dd>
+			</dl>
+			</a>
+			<p>400-800-8200</p>
+		</div>
+		<!--footer-->
+		<div class="footer">
+			<div class="top">
+				<div class="wrapper">
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot1.png"/></a>
+						<span class="fl">7天无理由退货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot2.png"/></a>
+						<span class="fl">15天免费换货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot3.png"/></a>
+						<span class="fl">满599包邮</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot4.png"/></a>
+						<span class="fl">售后服务咨询</span>
+					</div>
+				</div>
+			</div>
+			<p class="dibu">杰森服装商城&copy;Jack<br/>
+			</p>
+		</div>
+		<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/user.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/html" id="commentDiv">
+			<div class="comment">
+				<div class="productDesc" style="margin-bottom: 5px;">
+					<img src="" style="width: 30px;vertical-align: middle;margin-right: 5px;"/>
+					<span style="font-size: 12px;vertical-align: middle;">商品名称</span>
+				</div>
+				<textarea name="" rows="" cols="" placeholder="请输入评价"></textarea>
+			</div>
+		</script>
+		<script>
+			$(".del").on("click",function () {
+			    if(confirm("确认删除该订单?")){
+                    var orderId = $(this).parents(".dkuang").attr("id");
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/portal/order/"+orderId,
+                        success: function(data){
+                            if(data.code==200){
+                                alert("已删除订单");
+                                window.location.reload();
+                            }else{
+                                alert(data.msg);
+                            }
+                        }
+                    });
+				}
+            });
+
+            $(".payOrder").on("click",function () {
+                var orderId = $(this).parents(".dkuang").attr("id");
+                window.location.href="/portal/alipay/toAlipayPage/"+orderId;
+            });
+
+            $(".confirmOrder").on("click",function () {
+                if(confirm("确认收货？")){
+                    var orderId = $(this).parents(".dkuang").attr("id");
+                    $.ajax({
+                        type: "PUT",
+                        url: "/portal/order/confirmOrder/"+orderId,
+                        success: function(data){
+                            if(data.code==200){
+                                alert("已确认收货");
+                                window.location.reload();
+                            }else{
+                                alert(data.msg);
+                            }
+                        }
+                    });
+				}
+            });
+            $("#logout").on("click",function(){
+                $.ajax({
+                    type: "DELETE",
+                    url: "/portal/user/logout",
+                    success: function(data){
+                        if(data.code==200){
+                            alert("注销成功");
+                            window.location.reload();
+                        }else{
+                            alert(data.msg);
+                        }
+                    }
+                });
+            });
+		</script>
+	</body>
+</html>

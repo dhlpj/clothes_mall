@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>商品编辑</title>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/layui_ext/dtree/dtree.css}">
+    <link rel="stylesheet" th:href="@{/layui_ext/dtree/font/dtreefont.css}">
+    <link rel="stylesheet" th:href="@{/admin/css/deleteImg.css}">
+</head>
+<body>
+<form class="layui-form layui-form-pane" id="productForm"> <!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
+    <input type="hidden" id="productId" name="productId"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品名称</label>
+        <div class="layui-input-inline" style="width: 400px;">
+            <input type="text" name="productName" id="productName" required placeholder="请输入" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">所属分类</label>
+        <div class="layui-input-block">
+            <span id="categoryName"></span>
+            <input type="button" class="layui-btn layui-normal" id="openCategoryTreeBtn" value="选择分类" />
+            <input type="hidden" id="cid1" name="cid1"/>
+            <input type="hidden" id="cid2" name="cid2"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品描述</label>
+        <div class="layui-input-block">
+            <textarea id="description" name="description" style="display: none;"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">颜色</label>
+        <div class="layui-input-block">
+            <ul id="colors">
+                <li>
+                    <div class="layui-collapse">
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">
+                                <div class="layui-input-inline" style="width: 150px;">
+                                    <input type="text" name="color" placeholder="新的颜色" required autocomplete="off" class="layui-input colorInput" oldValue="">
+                                </div>
+                                <div class="layui-input-inline" style="width: 150px;">
+                                    <input type="text" name="price" placeholder="请输入商品价格(元)" required autocomplete="off" class="layui-input priceInput" >
+                                </div>
+                                <input type="button" class="layui-btn" id="addColor" value="+" />
+                            </h2>
+                            <div class="layui-colla-content">
+                                <div class="layui-upload">
+                                    <div class="layui-upload-drag skuImagesBtn layui-inline">
+                                        <i class="layui-icon"></i>
+                                        <p>点击上传，或将文件拖拽到此处</p>
+                                    </div>
+                                    <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;width: 88%">
+                                        <div class="layui-upload-list uploader-list" style="overflow: auto;">
+                                        </div>
+                                    </blockquote>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">尺寸</label>
+        <div class="layui-input-block">
+            <ul id="sizes">
+                <li>
+                    <div class="layui-input-inline" style="width: 150px;">
+                        <input type="text" name="size" placeholder="新的尺寸" required autocomplete="off" class="layui-input sizeInput" oldValue="">
+                    </div>
+                    <input type="button" class="layui-btn" id="addSize" value="+" />
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">SKU列表</label>
+        <div class="layui-input-block" style="width: 1000px;">
+            <table class="layui-table" lay-filter="skuTable" id="skuTable">
+                <colgroup>
+                    <col width="150">
+                    <col width="200">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>颜色</th>
+                    <th>尺寸</th>
+                    <th>库存</th>
+                    <th>是否启用</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="submit" class="layui-btn" id="submitBtn" value="立即提交"/>
+            <input type="button" class="layui-btn layui-btn-primary" id="resetBtn" value="重置"/>
+        </div>
+    </div>
+    <!-- 更多表单结构排版请移步文档左侧【页面元素-表单】一项阅览 -->
+    <!--<input type="text" lay-verify="email">
+      <input type="checkbox" checked lay-skin="switch" lay-filter="encrypt" title="是否加密">
+      <button lay-submit lay-filter="test">提交</button>-->
+</form>
+<script th:src="@{/layui/layui.js}"></script>
+
+<script type="text/html" id="colorLi">
+    <li>
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">
+                    <div class="layui-input-inline" style="width: 150px;">
+                        <input type="text" name="color" placeholder="新的颜色" required autocomplete="off" class="layui-input colorInput" oldValue="">
+                    </div>
+                    <div class="layui-input-inline" style="width: 150px;">
+                        <input type="text" name="price" placeholder="请输入商品价格(元)" required autocomplete="off" class="layui-input priceInput">
+                    </div>
+                    <input type="button" class="layui-btn deleteColor" value="-" />
+                </h2>
+                <div class="layui-colla-content">
+                    <div class="layui-upload">
+                        <div class="layui-upload-drag skuImagesBtn layui-inline">
+                            <i class="layui-icon"></i>
+                            <p>点击上传，或将文件拖拽到此处</p>
+                        </div>
+                        <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;width: 88%">
+                            <div class="layui-upload-list uploader-list" style="overflow: auto;">
+                            </div>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+</script>
+<script type="text/html" id="sizeLi">
+    <li>
+        <div class="layui-input-inline" style="width: 150px;">
+            <input type="text" name="size" placeholder="新的尺寸" required autocomplete="off" class="layui-input sizeInput" oldValue="">
+        </div>
+        <input type="button" class="layui-btn deleteSize" value="-" />
+    </li>
+</script>
+<script type="text/html" id="skuStock">
+    <input type="text" name="stock" placeholder="请输入商品库存" required autocomplete="off" class="layui-input skuStock">
+</script>
+<script type="text/html" id="skuState">
+    <input type="checkbox" name="saleable" lay-filter="skuState" lay-skin="switch" class="skuState" lay-text="ON|OFF" checked="checked">
+</script>
+
+<script>
+    layui.extend({
+        dtree: '/layui_ext/dtree/dtree'   // 扩展layui
+    }).use(['dtree', 'layer', 'form','table','layedit','upload','element'], function () {
+        var dtree = layui.dtree;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var layedit = layui.layedit;
+        var upload = layui.upload;
+        var $ = layui.jquery;
+        var element = layui.element;
+
+        //建立编辑器,id值
+        layedit.set({
+            uploadImage: {
+                url: '/upload/image/editor', //上传接口
+                method: 'POST',
+            }
+        });
+        var descriptionEditor = layedit.build('description');
+
+        //文件上传的渲染
+        var uploadInst =upload.render({
+            elem: '.skuImagesBtn', //绑定元素
+            url: '/upload/image', //上传接口
+            method: 'POST',
+            accept: 'images',//指定允许上传时校验的文件类型
+            acceptMime: 'image/*', //规定打开文件选择框时，筛选出的文件类型
+            exts: 'jpg|png|bmp|jpeg',//允许上传的文件后缀
+            auto: true, //是否选完文件后自动上传
+            field: 'file',//设定文件域的字段名
+            size: 1024,//单位KB
+            multiple: true,//多文件上传
+            drag: true,
+            before: function(obj){ //obj参数包含已选择的文件,一般用于多文件非自动上传
+                layer.load(); //上传loading
+            },
+            done: function(res, index, upload){//服务端响应信息、当前文件的索引、重新上传的方法
+                //上传完毕回调
+                if(res.code == 200){
+                    //do something （比如将res返回的图片链接保存到表单的隐藏域）
+                    var $item = this.item;//当前选择的元素
+                    $item.nextAll().find(".uploader-list").append(
+                        '<div id="" class="file-iteme">' +
+                        '<div class="handle"><i class="layui-icon layui-icon-delete"></i></div>' +
+                        '<img style="width: 100px;height: 100px;" src='+ res.data +'>' +
+                        '</div>'
+                    );
+                    layer.closeAll('loading');//关闭加载框
+                }else{
+                    layer.alert(res.msg, {
+                        icon: 2
+                    });
+                    layer.closeAll('loading');//关闭加载框
+                }
+            }
+            ,error: function(){//请求异常回调
+                layer.closeAll('loading');//关闭加载框
+            }
+        });
+
+        //监听鼠标悬浮在图片上的事件
+        $(document).on("mouseenter mouseleave", ".file-iteme", function(event){
+            if(event.type === "mouseenter"){
+                //鼠标悬浮
+                $(this).children(".info").fadeIn("fast");
+                $(this).children(".handle").fadeIn("fast");
+            }else if(event.type === "mouseleave") {
+                //鼠标离开
+                $(this).children(".info").hide();
+                $(this).children(".handle").hide();
+            }
+        });
+
+        // 删除图片
+        $(document).on("click", ".file-iteme .handle", function(event){
+            $(this).parent().remove();
+        });
+
+        //添加颜色
+        $("#addColor").on("click",function(){
+            var flag = true;
+            $.each($(".colorInput"), function() {
+                var colorText = $(this).val();
+                if($.trim(colorText)==""){
+                    layer.alert("请填写完成后，再进行添加", {
+                        icon: 2
+                    });
+                    flag = false;
+                    return false; //跳出循环
+                }
+            });
+            if(flag==true){
+                var $newLiHtml= $($("#colorLi").html());
+                $("#colors").append($newLiHtml);
+                var $btn = $newLiHtml.find(".skuImagesBtn");
+                //渲染折叠面板
+                element.render('collapse');
+                //渲染上传组件
+                upload.render({
+                    elem: $btn, //绑定元素
+                    url: '/upload/image', //上传接口
+                    method: 'POST',
+                    accept: 'images',//指定允许上传时校验的文件类型
+                    acceptMime: 'image/*', //规定打开文件选择框时，筛选出的文件类型
+                    exts: 'jpg|png|bmp|jpeg',//允许上传的文件后缀
+                    auto: true, //是否选完文件后自动上传
+                    field: 'file',//设定文件域的字段名
+                    size: 1024,//单位KB
+                    multiple: true,
+                    drag: true,
+                    before: function(obj){ //obj参数包含已选择的文件,一般用于多文件非自动上传
+                        layer.load(); //上传loading
+                    },
+                    done: function(res, index, upload){//服务端响应信息、当前文件的索引、重新上传的方法
+                        //上传完毕回调
+                        if(res.code == 200){
+                            //do something （比如将res返回的图片链接保存到表单的隐藏域）
+                            //获取当前触发上传的元素，一般用于 elem 绑定 class 的情况
+                            var $item = this.item;//当前选择的元素
+                            $item.nextAll().find(".uploader-list").append(
+                                '<div id="" class="file-iteme">' +
+                                '<div class="handle"><i class="layui-icon layui-icon-delete"></i></div>' +
+                                '<img style="width: 100px;height: 100px;" src='+ res.data +'>' +
+                                '</div>'
+                            );
+                            layer.closeAll('loading');//关闭加载框
+                        }else{
+                            layer.alert(res.msg, {
+                                icon: 2
+                            });
+                            layer.closeAll('loading');//关闭加载框
+                        }
+                    }
+                    ,error: function(){//请求异常回调
+                        layer.closeAll('loading');//关闭加载框
+                    }
+                });
+            }
+        });
+
+        //删除颜色
+        $(document).on("click", ".deleteColor", function() {/*为脚本创建的元素添加事件,jQuery 1.9后移除了live函数*/
+            $(this).parents("li").remove();
+            var colorValue = $(this).parent().find(".colorInput").val();
+            console.log(colorValue);
+            $.each($("#skuTable>tbody>tr"), function() {
+                var colorHtml = $(this).children().first().html();
+                if(colorValue==colorHtml){
+                    $(this).remove();
+                }
+            });
+        });
+
+        //添加尺寸
+        $("#addSize").on("click",function(){
+            var flag = true;
+            $.each($(".sizeInput"), function() {
+                var sizeText = $(this).val();
+                if($.trim(sizeText)==""){
+                    layer.alert("请填写完成后，再进行添加", {
+                        icon: 2
+                    });
+                    flag = false;
+                    return false; //跳出循环
+                }
+            });
+            if(flag==true){
+                var $newLiHtml = $($("#sizeLi").html());
+                $("#sizes").append($newLiHtml);
+            }
+        });
+
+        //删除尺寸
+        $(document).on("click", ".deleteSize", function() {
+            $(this).parents("li").remove();
+            var sizeValue = $(this).prev().children(".sizeInput").val();
+            $.each($("#skuTable>tbody>tr"), function() {
+                var sizeHtml = $(this).children().first().next().html();
+                if(sizeValue==sizeHtml){
+                    $(this).remove();
+                }
+            });
+        });
+
+        //监听颜色输入框
+        $(document).on("blur", ".colorInput", function() {/*为脚本创建的元素添加事件,jQuery 1.9后移除了live函数*/
+            var preVal=$(this).attr("oldValue");
+            var colorValue = $.trim($(this).val());
+            if(preVal!=colorValue){
+                var count = 0;//计算相同输入的个数
+                $.each($(".colorInput"), function() {
+                    var colorText = $.trim($(this).val());
+                    if(colorText==colorValue){
+                        count++;
+                    }
+                    if(count==2){
+                        return false;
+                    }
+                });
+                if(count==2){
+                    layer.alert("存在相同颜色，请修改", {
+                        icon: 2
+                    });
+                    $(this).val("");
+                    return;
+                }
+                $(this).attr("oldValue",colorValue);
+                if(preVal==""){//添加
+                    $.each($(".sizeInput"), function() {
+                        var sizeText = $.trim($(this).val());
+                        if(sizeText!=""){
+                            $("#skuTable>tbody").append("<tr><td>"+colorValue +"</td><td>"+ sizeText +"</td><td>"
+                                + $("#skuStock").html() + "</td><td>"+ $("#skuState").html() + "</td></tr>");
+                            form.render('checkbox');
+                        }
+                    });
+                }else{//修改
+                    $.each($("#skuTable>tbody>tr"), function() {
+                        var colorHtml = $(this).children().first().html();
+                        console.log(colorHtml);
+                        if(preVal==colorHtml){
+                            $(this).children().first().html(colorValue);
+                        }
+                    });
+                }
+            }
+        });
+
+        //监听尺寸输入框
+        $(document).on("blur", ".sizeInput", function() {/*为脚本创建的元素添加事件,jQuery 1.9后移除了live函数*/
+            var preVal=$(this).attr("oldValue");
+            var sizeValue = $.trim($(this).val());
+            if(preVal!=sizeValue){
+                var count = 0;//计算相同输入的个数
+                $.each($(".sizeInput"), function() {
+                    var sizeText = $.trim($(this).val());
+                    if(sizeText==sizeValue){
+                        count++;
+                    }
+                    if(count==2){
+                        return false;
+                    }
+                });
+                if(count==2){
+                    layer.alert("存在相同尺寸，请修改", {
+                        icon: 2
+                    });
+                    $(this).val("");
+                    return;
+                }
+                $(this).attr("oldValue",sizeValue);
+                if(preVal==""){//添加
+                    $.each($(".colorInput"), function() {
+                        var colorText = $.trim($(this).val());
+                        if(colorText!=""){
+                            $("#skuTable>tbody").append("<tr><td>"+colorText +"</td><td>" + sizeValue +"</td><td>"
+                                + $("#skuStock").html() + "</td><td>"+ $("#skuState").html() + "</td></tr>");
+                            form.render('checkbox');
+                        }
+                    });
+                }else{//修改
+                    $.each($("#skuTable>tbody>tr"), function() {
+                        var sizeHtml = $(this).children().first().next().html();
+                        console.log(preVal);
+                        if(preVal==sizeHtml){
+                            $(this).children().first().next().html(sizeValue);
+                        }
+                    });
+                }
+            }
+        });
+
+        //打开分类选择框
+        $("#openCategoryTreeBtn").click(function(){
+            var DTree;
+            layer.open({
+                type: 1,  //type:0 也行
+                title: "选择分类",
+                area: ["400px", "80%"],
+                content: '<ul id="openCategoryTree" class="dtree" data-id="0"></ul>',
+                btn: ['确认选择'],
+                success: function(layero, index){
+                     DTree = dtree.render({
+                        //  obj: $(layero).find("#openCategoryTree"),    如果直接用elem加载不出来，则可以使用这个方式加载jquery的DOM
+                        elem: "#openCategoryTree",
+                        initLevel: "1",
+                        load: true,//加载时显示遮罩
+                        type: "load",//增量加载(异步)
+                        url: "/admin/category/list",
+                        async: true,
+                        method: "GET",
+                        filterRequest: ["context", "parentId", "isLeaf", "level", "spread", "dataType", "ischecked", "initchecked", "basicData", "recordData"],//过滤默认会发送的字段(现在只发送当前节点的nodeId)
+                        dataStyle: "layuiStyle",//使用layui的返回数据风格
+                        response: {
+                            message: "msg",
+                            statusCode: 200//layui默认0为成功，修改为200
+                        },
+                        errDataShow: true,//显示错误信息
+                    });
+
+                    // 绑定节点的双击
+                    dtree.on("nodedblclick('openCategoryTree')", function(obj){
+                        if (obj.param.isLeaf==false) { // 如果是叶子节点
+                            layer.alert("请选择二级分类", {
+                                icon: 2
+                            });
+                        }else{
+                            $("#categoryName").html(obj.parentParam.context+"-"+obj.param.context);
+                            $("#cid1").val(obj.param.parentId);
+                            $("#cid2").val(obj.param.nodeId);
+                            DTree.initNodeParam();//重置参数，若不重置，则下次查询树会使用这次选择的nodeId
+                            layer.close(index);
+                        }
+                    });
+                },
+                yes: function(index, layero) {
+                    var param = dtree.getNowParam("openCategoryTree"); // 获取当前选中节点
+                    if (param.isLeaf==false) { // 如果是叶子节点
+                        layer.alert("请选择二级分类", {
+                            icon: 2
+                        });
+                    }else{
+                        var parentParam = dtree.getParentParam("openCategoryTree",param.nodeId);
+                        $("#categoryName").html(parentParam.context+"-"+param.context);
+                        $("#cid1").val(param.parentId);
+                        $("#cid2").val(param.nodeId);
+                        DTree.initNodeParam();
+                        layer.close(index);
+                    }
+                }
+            });
+        });
+
+        //选择saleable后取消input required
+        form.on('switch(skuState)', function(data){
+            var state = data.elem.checked;
+            if(state==false){
+                $(this).parent().siblings().children(".skuStock").removeAttr("required");
+            }else{
+                $(this).parent().siblings().children(".skuStock").prop("required", "true");
+            }
+        });
+
+        //提交按钮
+        $("#productForm").submit(function(){
+            var name = $("#productName").val();
+            var cid1 = $("#cid1").val();
+            var cid2 = $("#cid2").val();
+            if(cid1==0||cid2==0){
+                layer.alert("请选择分类", {
+                    icon: 2
+                });
+                return false;
+            }
+            var description = layedit.getContent(descriptionEditor);
+            var index = {};//保存color对应数组的下标
+            var colors = [];
+            var flag = false;//校验出错的标志
+            $.each($("#colors>li"), function() {//遍历颜色
+                var colorName = $.trim($(this).find(".colorInput").val());
+                if(colorName!=""){
+                    var color = {};
+                    color.colorName=colorName;
+                    var images = "";
+                    var imageArry = [];
+                    $.each($(this).find(".file-iteme>img"),function() {
+                        imageArry.push($(this).attr("src"));
+                    });
+                    if(imageArry.length>0){
+                        images = imageArry.join(",");
+                    }
+                    var price = parseInt($(this).find(".priceInput").val());
+                    if(isNaN(price)){
+                        layer.alert("请输入正确的价格", {
+                            icon: 2
+                        });
+                        flag = true;
+                        return;
+                    }
+                    color.images=images;
+                    color.price=price*100;//单位分
+                    color.sizes=[];
+                    colors.push(color);
+                    index[colorName]=colors.length-1;
+                }
+            });
+            if(flag){
+                return false;
+            }
+            $.each($("#skuTable input:checked"), function() {//遍历选中的tr
+                var colorName = $.trim($(this).parents("tr").children().first().html());
+                var sizeName = $.trim($(this).parents("tr").children().eq(1).html());
+                var stockCount = parseInt($.trim($(this).parents("tr").children().eq(2).children(".skuStock").val()));
+                if(isNaN(stockCount)){
+                    layer.alert("请输入正确的库存数量", {
+                        icon: 2
+                    });
+                    flag = true;
+                    return false;
+                }
+                var size = {};
+                size.sizeName = sizeName;
+                size.stockCount = stockCount;
+                colors[index[colorName]].sizes.push(size);
+            });
+            if(flag){
+                return false;
+            }
+            for(var i in colors){
+                if(colors[i].sizes.length==0){//如果尺寸信息为空去除该颜色
+                    colors.splice(i,1);
+                }
+            }
+            if(colors.length==0){
+                layer.alert("请添加颜色及尺寸", {
+                    icon: 2
+                });
+                return false;
+            }
+            var product = {};
+            product.name=name;
+            product.cid1=cid1;
+            product.cid2=cid2;
+            var productDetail = {};
+            productDetail.description=description;
+            product.productDetail=productDetail;
+            product.colors=colors;
+            console.log(product);
+            var productId = $("#productId").val();
+            //新增商品
+            if(productId==""){
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/product",
+                    data: JSON.stringify(product),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function(data){
+                        if(data.code==200){
+                            layer.msg('新增商品成功', {
+                                icon: 1
+                            });
+                            var layerIndex = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(layerIndex); //再执行关闭
+                            //刷新表格
+                            parent.updateProductTable();
+                        }else{
+                            layer.alert(data.msg, {
+                                icon: 2
+                            });
+                        }
+                    }
+                });
+            }else{//修改商品
+                $.ajax({
+                    type: "PUT",
+                    url: "/admin/product/"+productId,
+                    data: JSON.stringify(product),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function(data){
+                        if(data.code==200){
+                            layer.msg('修改商品成功', {
+                                icon: 1
+                            });
+                            var layerIndex = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(layerIndex); //再执行关闭
+                            //刷新表格
+                            parent.updateProductTable();
+                        }else{
+                            layer.alert(data.msg, {
+                                icon: 2
+                            });
+                        }
+                    }
+                });
+            }
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+        //重置按钮
+        $("#resetBtn").on("click",function(){
+            window.location.reload();
+        });
+
+        //判断是新增操作还是修改操作
+        $(function () {
+            var search = location.search; //获取url中"?"符及其后的字串
+            if (search.indexOf("?") != -1) {
+                var str = search.substr(1);
+                var requsetParam = str.split("&");
+                if(requsetParam.length==1){
+                    var keyAndValue = requsetParam[0].split("=");
+                    if(keyAndValue[0]=="productId"){
+                        console.log("productId:"+keyAndValue[1]);
+                        $("#productId").val(decodeURI(keyAndValue[1]));
+                        getProduct(keyAndValue[1]);
+                    }
+                }
+            }
+        });
+
+        //获得商品信息
+        function getProduct(productId){
+            $.ajax({
+                type: "GET",
+                url: "/admin/product/"+productId,
+                success: function(data){
+                    if(data.code==200){
+                        //填充数据
+                        fillField(data);
+                    }else{
+                        layer.alert(data.msg, {
+                            icon: 2
+                        });
+                    }
+                }
+            });
+        }
+
+        //填充数据
+        function fillField(data){
+            var colors = data.data.colors;//颜色数组
+            $("#productName").val(data.data.name);
+            $("#categoryName").html(data.data.cid2Name);
+            $("#cid1").val(data.data.cid1);
+            $("#cid2").val(data.data.cid2);
+            $("#description").text(data.data.productDetail.description);
+            descriptionEditor = layedit.build('description');
+            var sizeNameArray = [];
+            var skus = [];
+            //填充颜色
+            $.each(colors, function(index,val) {//遍历颜色
+                var colorName = val.colorName;
+                var price = val.price/100;//单位分
+                var images = val.images;
+                var imageArry = images.split(",");
+                var sizes= val.sizes;//size数组
+                for(var i in sizes){
+                    var sku = {};
+                    var sizeName = sizes[i].sizeName;
+                    sku.sizeName = sizeName;
+                    if(sizeNameArray.indexOf(sizeName)==-1){//不存在该尺寸
+                        sizeNameArray.push(sizeName);
+                    }
+                    sku.colorName = colorName;
+                    sku.stockCount = sizes[i].stockCount;
+                    skus.push(sku);
+                }
+                if(index==0){
+                    $("#colors .colorInput").val(colorName);
+                    $("#colors .colorInput").attr("oldValue",colorName);
+                    $("#colors .priceInput").val(price);
+                    if(images!=""){
+                        $.each(imageArry,function(index,val){
+                            $("#colors .uploader-list").append(
+                                '<div id="" class="file-iteme">' +
+                                '<div class="handle"><i class="layui-icon layui-icon-delete"></i></div>' +
+                                '<img style="width: 100px;height: 100px;" src='+ val +'>' +
+                                '</div>'
+                            )
+                        });
+                    }
+                }else{
+                    var $newLiHtml= $($("#colorLi").html());
+                    $newLiHtml.find(".colorInput").attr("oldValue",colorName);
+                    $newLiHtml.find(".colorInput").val(colorName);
+                    $newLiHtml.find(".priceInput").val(price);
+                    if(images!=""){
+                        $.each(imageArry,function(index,val){
+                            $newLiHtml.find(".uploader-list").append(
+                                '<div id="" class="file-iteme">' +
+                                '<div class="handle"><i class="layui-icon layui-icon-delete"></i></div>' +
+                                '<img style="width: 100px;height: 100px;" src='+ val +'>' +
+                                '</div>'
+                            )
+                        });
+                    }
+                    $("#colors").append($newLiHtml);
+                    var $btn = $newLiHtml.find(".skuImagesBtn");
+                    //渲染折叠面板
+                    element.render('collapse');
+                    //渲染上传组件
+                    upload.render({
+                        elem: $btn, //绑定元素
+                        url: '/upload/image', //上传接口
+                        method: 'POST',
+                        accept: 'images',//指定允许上传时校验的文件类型
+                        acceptMime: 'image/*', //规定打开文件选择框时，筛选出的文件类型
+                        exts: 'jpg|png|bmp|jpeg',//允许上传的文件后缀
+                        auto: true, //是否选完文件后自动上传
+                        field: 'file',//设定文件域的字段名
+                        size: 1024,//单位KB
+                        multiple: true,
+                        drag: true,
+                        before: function(obj){ //obj参数包含已选择的文件,一般用于多文件非自动上传
+                            layer.load(); //上传loading
+                        },
+                        done: function(res, index, upload){//服务端响应信息、当前文件的索引、重新上传的方法
+                            //上传完毕回调
+                            if(res.code == 200){
+                                //do something （比如将res返回的图片链接保存到表单的隐藏域）
+                                //获取当前触发上传的元素，一般用于 elem 绑定 class 的情况
+                                var $item = this.item;//当前选择的元素
+                                $item.nextAll().find(".uploader-list").append(
+                                    '<div id="" class="file-iteme">' +
+                                    '<div class="handle"><i class="layui-icon layui-icon-delete"></i></div>' +
+                                    '<img style="width: 100px;height: 100px;" src='+ res.data +'>' +
+                                    '</div>'
+                                );
+                                layer.closeAll('loading');//关闭加载框
+                            }else{
+                                layer.alert(res.msg, {
+                                    icon: 2
+                                });
+                                layer.closeAll('loading');//关闭加载框
+                            }
+                        }
+                        ,error: function(){//请求异常回调
+                            layer.closeAll('loading');//关闭加载框
+                        }
+                    });
+                }
+            });
+            //填充尺寸
+            $.each(sizeNameArray,function (index,val) {
+                if(index==0){
+                    $("#sizes .sizeInput").attr("oldValue",val);
+                    $("#sizes .sizeInput").val(val);
+                }else{
+                    var $newLiHtml= $($("#sizeLi").html());
+                    $newLiHtml.find(".sizeInput").attr("oldValue",val);
+                    $newLiHtml.find(".sizeInput").val(val);
+                    $("#sizes").append($newLiHtml);
+                }
+            })
+            //生成表格
+            generateSku();
+            //填充表格数据
+            $.each($("#skuTable>tbody>tr"), function() {
+                var colorHtml = $(this).children().first().html();
+                var sizeHtml = $(this).children().first().next().html();
+                var flag = true;//未售卖的sku的标志
+                for(var index in skus) {
+                    var sizeName = skus[index].sizeName;
+                    var colorName = skus[index].colorName;
+                    var stockCount = skus[index].stockCount;
+                    if(sizeName==sizeHtml&&colorName==colorHtml){
+                        $(this).find(".skuStock").val(stockCount);
+                        flag = false;
+                    }
+                    //skus.splice(index,1);//移除元素
+                }
+                if(flag){
+                    //将是否启用开关值为false
+                    $(this).find(".skuStock").removeAttr("required");
+                    //checked 设置为false
+                    $(this).find(".skuState").prop("checked",false);
+                    form.render('checkbox');
+                }
+
+            });
+        }
+
+        //生成sku
+        function generateSku(){
+            var colorArray=new Array();
+            var sizeArray=new Array();
+            $.each($(".colorInput"), function() {
+                var colorText = $.trim($(this).val());
+                if(colorText!=""){
+                    colorArray.push(colorText);
+                }
+            });
+            $.each($(".sizeInput"), function() {
+                var sizeText = $.trim($(this).val());
+                if(sizeText!=""){
+                    sizeArray.push($.trim(sizeText));
+                }
+            });
+            $("#skuTable>tbody").empty();//先清空
+            if (colorArray.length != 0 && sizeArray.length != 0) {
+                for (var i in colorArray) {
+                    //每一个颜色rowspan
+                    for (var j in sizeArray) {
+                        $("#skuTable>tbody").append("<tr><td>"+colorArray[i] +"</td><td>"
+                            + sizeArray[j] +"</td><td>" + $("#skuStock").html() + "</td><td>"
+                            + $("#skuState").html() + "</td></tr>");
+                    }
+                    form.render('checkbox');
+                }
+            }
+        }
+    });
+
+</script>
+</body>
+</html>

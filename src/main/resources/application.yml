@@ -1,0 +1,58 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+  thymeleaf:
+    cache: false #禁用thymeleaf缓存
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+  servlet:
+    multipart:
+      max-file-size: 5MB #限制上传文件的大小,默认为1M
+      #max-request-size: #一次请求最大的上传大小，默认为10M
+  data:
+    elasticsearch:
+      cluster-name: elasticsearch
+      cluster-nodes: localhost:9300
+  redis:
+    host: localhost
+    port: 6379
+    password: donghualifeng
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #使用sysouot打印sql信息
+fdfs:
+  so-timeout: 1501
+  connect-timeout: 601
+  thumb-image: # 缩略图
+    width: 60
+    height: 60
+  tracker-list: # tracker地址
+    - localhost:22122
+mall:
+  upload:
+    baseUrl: http://localhost:8080/ #采用阿里云服务器的80端口需要进行备案，这里直接使用8080端口
+    allowTypes:
+      - image/jpg
+      - image/jpeg
+      - image/png
+      - image/bmp
+  idWorker:
+    workerId: 1
+    dataCenterId: 1
+  alipay:
+    app_id: 2016092700608255
+    merchant_private_key: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQChpm7FbcK1EOps8DjLqymqmfBIRLOHLYwMXQNJW7VvqGXsy1FjRMMhaZBsfHI7hQB1e2BhyvrJ1aYpZKZbkcWBRqFAEgXDCLwVxGYI2X2XOy51r8sNL29nvtTL83BL9r069ULuDziOEVzMCYkAdLSoggb/HjyP+nErvVd1KHIAyGiR8OvsnZwLCSADjjXzH2k7eXr/z0vqNniRA1HHnlltXfmnXqj8C3DLoKLeqc0WH7r9p5RCs3ZooTUYu39UY9IltHLmTgQDk/KH1eqixnabdy4dNwc5sKRvDwdlKARXyCInaGjb9MnEGQQuD0j7GegdoIqz0Lyj3PErDWax/1WfAgMBAAECggEAWMpwgeVeU9Ks0ZXJvKWRx3Gy+B80dYXhLVFR4tOK/4ACLGUpmVtFy26Os+hPXr4ZmG5ibJTv2DmQgaAVeKrDT9UZ8XV00MJVfadZXHcKcy1AwcgDwoRRryy0+ioHftJS8rWRQ+38ZJzI2hJKvINeUEjLywoyvesUirAAAAxtQlvzCWc7zGSJ3bXggsb1TbaJ3Jr+SIgxtKEYEddbDshA8GgvPjKy0P2G9e0+SgaOwiCo0nu6BEIzAAT0l2rxRddVIk0rxNLa3jMnbrCw6b95Fis1IpR6md4WRp+3RmwdZBFYZNGDP0ry73zCDwOSZa4bjlReD9YZB0ol4GkWURzfoQKBgQDMMtRQFPFd3MbQRdfEfkJ5LuEDkf7xmp2Vm9EFSF1wE717DAK+fKaDYJfayGz69e/aiIwGAVcT14vFBiKm9Wv1Yop7LeUcZNn29piHASkhl1s3k5S0m9brWDEZvNdCoSxU/cG3Fd+2/dQ+WThFMsJz3sVu10nwkOPsw4PCLpfkZwKBgQDKqGao0Qc9aS/R623gdluKLQSZBu94lfsw6FCELd/XaQIcDYqz1z9SdlcT5pWfq/04zXxMDBu/KDB4rMcfOXUz7G/b6hYZv6cRle65enEQa8dXUAFS9JsgYtFewgVRtK7p8uvyII2ydAFCZe51X3Ug89R+CpukVuEV90TBYnSCCQKBgHg/Qnm6K3zLoyRIzMwAUiLMsWMJ2WjrVPsiG8+RkryKU12fcAo+m0voWORUfKC4rTsyh8qNhXrAxqUKfON2yNFi6wuoti+nUBe3lZCC5XbLi8LJnJtS3hgPAjMW2mh5QwL1v9qR/gDjrtXccl+Fia70M62XCAqrOB1X8UIrb/TnAoGALYJFk3FlO9AsMeq5gOdzRQM4/hhFnIGpp+Dze8tFcf0dwSj1Vc9nY+A5S7nDLdkUgzX5zKYHcRTYVbEPAh8IB8H3mJ3nmp6kKNnPgw1Q6Iwbdqr7sSJG1635MFtHkIKPqO+pNnVC/Kj6Q2vacbce+Whn9mnxa6Uq5KDjar3uRekCgYEAqGRxSWaEv92m9l3iiYRRU1WzW0qdlDDABz2M5/kFxTWJ0Mp0JthZMFBNWsG2fg2Ph/PsUgH+Pkhpp1mD2ABIhWqgrYtpLpIwriwFBHqXJ8CZnpa2dl5yfxTz9Z7wQzqFjceDGm9FIBA5GYmZOcYkkiXwQJcPVWahx3OjHWd3HBQ=
+    alipay_public_key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyYukCyQTQqXolnKLY3VcYHXoUXM/dKbjfsDbDLbugWYC2YI4bjx8bFdGX7a2MCPkAqxl00cAlFcmRVxz+qVVTtIjztZLjEuUzIxPAYqnVvo4bf47gQp6sm8wjMeT9iJ9xVkUnQ99YONQldXrS0sFeGkrGNbb3VTnnLursTUaFqZkKKcpgROszkvQhjltwHfTfihLHlF3CKGUzvGOTIDmOjf5oKKbdM+zyuf5NHIhpXXE7aAc/5gMxdKbLFoV9I8BMXWaveT50HNbtOzeRlWODAaiHQX9IUAy1cvkopjQcZSZ1WvP7DV3kg3XipbHhysbmZzxTtyvVasea0Ael7lmlQIDAQAB
+    return_url: http://localhost:8080/portal/alipay/return #页面跳转同步通知接口路径,同步方式可能出现网络延迟，没有通知到商户
+    notify_url: http://e8fhty.natappfree.cc/portal/alipay/notify     #服务器异步通知接口路径
+    sign_type: RSA2
+    charset: utf-8
+    format: json #目前仅支持json
+    gateway_url: https://openapi.alipaydev.com/gateway.do
+    product_code: FAST_INSTANT_TRADE_PAY #销售产品码，与支付宝签约的产品码名称。目前仅仅支持FAST_INSTANT_TRADE_PAY

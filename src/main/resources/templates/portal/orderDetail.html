@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+		<head lang="en">
+			<meta charset="utf-8" />
+			<title>个人信息</title>
+			<link rel="stylesheet" type="text/css" href="/portal/css/public.css"/>
+			<link rel="stylesheet" type="text/css" href="/portal/css/myorder.css" />
+		</head>
+		<body>
+		<!------------------------------head------------------------------>
+		<div class="head ding">
+			<div class="wrapper clearfix">
+				<div class="clearfix" id="top">
+					<h1 class="fl"><a href="/portal/index.html"><img src="/portal/img/logo.png"/></a></h1>
+				</div>
+			</div>
+		</div>
+		<!------------------------------idea------------------------------>
+		<div class="address mt">
+			<div class="wrapper clearfix">
+				<a href="/portal/index.html" class="fl">首页</a>
+				<span>/</span>
+				<a href="/portal/user/toHomePage">个人中心</a>
+				<span>/</span>
+				<a href="/portal/user/toOrderPage" class="on">我的订单</a>
+			</div>
+		</div>
+
+		<!------------------------------Bott------------------------------>
+		<div class="Bott">
+			<div class="wrapper clearfix">
+				<div class="zuo fl">
+					<h3>
+						<a href="#"><img src="/portal/img/tx.png"/></a>
+						<p class="clearfix"><span class="fl" th:text="${session.username}">Jack</span><span class="fr" id="logout">退出登录</span></p>
+					</h3>
+					<div>
+						<h4>我的交易</h4>
+						<ul>
+							<li><a href="/portal/cart/toCartPage">我的购物车</a></li>
+							<li class="on"><a href="/portal/user/toOrderPage">我的订单</a></li>
+						</ul>
+						<h4>个人中心</h4>
+						<ul>
+							<li ><a href="/portal/user/toHomePage">我的中心</a></li>
+							<li><a href="/portal/user/toShippingPage">地址管理</a></li>
+						</ul>
+						<h4>账户管理</h4>
+						<ul>
+							<li><a href="/portal/myInfo.html">个人信息</a></li>
+							<li><a href="/portal/user/toChangePwdPage">修改密码</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="you fl">
+					<div class="my clearfix">
+						<h3>订单号：<span th:text="${order.orderId}">54163846846848468</span></h3>
+					</div>
+					<div class="orderList">
+						<div class="orderList1">
+							<h3 th:if="${order.status}==1">待支付</h3>
+							<h3 th:if="${order.status}==2">待发货</h3>
+							<h3 th:if="${order.status}==3">待收货</h3>
+							<h3 th:if="${order.status}==4">待评价</h3>
+							<h3 th:if="${order.status}==5">已关闭</h3>
+							<div class="clearfix" th:each="orderDetail:${order.orderDetails}">
+								<a target="_blank" th:href="@{/portal/product/productDetail(productId=${orderDetail.productId},colorId=${orderDetail.colorId})}" class="fl"><img th:src="${orderDetail.image}" style="width: 65px;height: 65px;"/></a>
+								<p class="fl">
+									<a target="_blank" th:href="@{/portal/product/productDetail(productId=${orderDetail.productId},colorId=${orderDetail.colorId})}" th:text="${orderDetail.name}">T恤</a>
+									<span th:text="|${orderDetail.colorName}，${orderDetail.sizeName}|" style="margin-left: 10px;margin-right: 10px">黑色，M</span>
+									<a href="#" th:text="|¥${orderDetail.price/100}x${orderDetail.num}|">¥99.00×1</a>
+							</div>
+						</div>
+						<div class="orderList1">
+							<h3>收货信息</h3>
+							<p>姓 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：<span th:text="${order.receiver}">张三</span></p>
+							<p>联系电话：<span th:text="${order.receiverMobile}">1574545121</span></p>
+							<p>收货地址：<span th:text="|${order.receiverProvince} ${order.receiverCity} ${order.receiverDistrict} ${order.receiverAddress}">四川 攀枝花市 东区 攀大</span></p>
+						</div>
+						<div class="orderList1">
+							<h3>支付方式</h3>
+							<p>支付方式：<span th:text="${order.paymentType}==1 ? '在线支付':'货到付款'">在线支付</span></p>
+						</div>
+						<div class="orderList1 hei">
+							<h3><strong>商品总价：</strong><span th:text="|¥${order.totalPay/100-order.postFee/100}|">¥99</span></h3>
+							<p><strong>运费：</strong><span th:text="|¥${order.postFee/100}|">¥0</span></p>
+							<p><strong>订单金额：</strong><span th:text="|¥${order.totalPay/100}|">¥99</span></p>
+							<p><strong>实付金额：</strong><span th:text="|¥${order.totalPay/100}|">¥99</span></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--返回顶部-->
+		<div class="gotop">
+			<a href="/portal/cart/toCartPage">
+				<dl>
+					<dt><img src="/portal/img/gt1.png"/></dt>
+					<dd>去购<br />物车</dd>
+				</dl>
+			</a>
+			<a href="#" class="dh">
+				<dl>
+					<dt><img src="/portal/img/gt2.png"/></dt>
+					<dd>联系<br />客服</dd>
+				</dl>
+			</a>
+			<a href="/portal/user/toHomePage">
+				<dl>
+					<dt><img src="/portal/img/gt3.png"/></dt>
+					<dd>个人<br />中心</dd>
+				</dl>
+			</a>
+			<a href="#" class="toptop" style="display: none">
+				<dl>
+					<dt><img src="/portal/img/gt4.png"/></dt>
+					<dd>返回<br />顶部</dd>
+				</dl>
+			</a>
+			<p>400-800-8200</p>
+		</div>
+		<!--footer-->
+		<div class="footer">
+			<div class="top">
+				<div class="wrapper">
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot1.png"/></a>
+						<span class="fl">7天无理由退货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot2.png"/></a>
+						<span class="fl">15天免费换货</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot3.png"/></a>
+						<span class="fl">满599包邮</span>
+					</div>
+					<div class="clearfix">
+						<a href="#2" class="fl"><img src="/portal/img/foot4.png"/></a>
+						<span class="fl">售后服务咨询</span>
+					</div>
+				</div>
+			</div>
+			<p class="dibu">杰森服装商城&copy;Jack<br/>
+			</p>
+		</div>
+		<script src="/portal/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/portal/js/user.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+            $("#logout").on("click",function(){
+                $.ajax({
+                    type: "DELETE",
+                    url: "/portal/user/logout",
+                    success: function(data){
+                        if(data.code==200){
+                            alert("注销成功")
+                            window.location.reload();
+                        }else{
+                            alert(data.msg);
+                        }
+                    }
+                });
+            });
+		</script>
+	</body>
+</html>
